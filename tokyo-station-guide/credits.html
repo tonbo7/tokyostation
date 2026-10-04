@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>出典とライセンス｜東京ステーションガイド</title>
+<meta name="description" content="東京ステーションガイドで使っているデータの出どころ・ライセンス・注意書き。">
+<style>
+  :root{--bg:#F8F8FB;--text:#000;--label:#626264;--link:#0017C1;--grid:#E6E6E6;--border:#CCC;--lb50:#F0F9FF;--lb900:#0055AD;--ye600:#D2A400}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo",system-ui,sans-serif;line-height:1.7;font-size:14px}
+  main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+  h1{font-size:20px;margin:0 0 4px}
+  h2{font-size:15px;margin:28px 0 8px;padding-top:14px;border-top:1px solid var(--grid)}
+  p{margin:6px 0}
+  .lead{color:var(--label);font-size:12.5px}
+  .note{background:#FFF6D9;border:1px dashed var(--ye600);border-radius:10px;padding:10px 14px;margin:14px 0}
+  .note p{margin:4px 0}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff}
+  th,td{border:1px solid var(--grid);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:var(--lb50);font-weight:600}
+  a{color:var(--link)}
+  .back{display:inline-block;margin-bottom:14px;font-size:12.5px}
+  code{background:#fff;border:1px solid var(--grid);border-radius:4px;padding:0 5px;font-size:12px}
+  .small{font-size:11.5px;color:var(--label)}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="index.html">← 地図にもどる</a>
+<h1>出典とライセンス</h1>
+<p class="lead">このサイトのデータは、すべて公開されているオープンデータです。どこから取ってきて、どういう条件で使えるのかをここに書いています。
+くわしい一覧は <a href="DATA_SOURCES.md">DATA_SOURCES.md</a> にもあります。</p>
+
+<div class="note">
+  <p><b>🚦 運行情報・バス・シェアサイクルについての注意</b></p>
+  <p>このデータは <a href="https://www.odpt.org/" target="_blank" rel="noopener">公共交通オープンデータセンター（ODPT）</a> がまとめて公開しているものです。各事業者が直接このサイトに出しているものではありません。</p>
+  <p>内容が正確・完全であるとは限りません。表示には必ず「取得時刻」を付けています。古い情報を現在の状況として出すことはせず、取れないときは「取得できませんでした」と表示します。</p>
+  <p>このサイトの表示について、鉄道・バス・シェアサイクルの事業者に<b>直接問い合わせないでください</b>。問題や質問は <a href="https://github.com/tonbo7/tokyostation/issues" target="_blank" rel="noopener">GitHub の Issues</a> へお願いします。</p>
+  <p>ODPT の API キーはサイトのファイルには入っていません。自分のキーを使う場合は「🚦 いまの状況」パネルで端末のブラウザにだけ保存されます。</p>
+</div>
+
+<h2>公共交通（いまの状況）</h2>
+<table>
+  <tr><th>データ</th><th>出どころ</th><th>ライセンス・条件</th><th>使い方</th></tr>
+  <tr><td>鉄道の運行情報（odpt:TrainInformation）</td><td>公共交通オープンデータセンター（JR東日本・東京メトロ・東京都交通局 ほか各社提供）</td><td>公共交通オープンデータ基本ライセンス。出典表示</td><td>比較ビューの電車の案・駅カード・🚦パネル。3分で期限切れ</td></tr>
+  <tr><td>バス停・系統・走っているバス（odpt:BusstopPole／BusroutePattern／Bus）</td><td>公共交通オープンデータセンター（東京都交通局 ほか）</td><td>同上</td><td>東京駅から約650mだけ。位置は1日、バスの位置は2分で期限切れ</td></tr>
+  <tr><td>シェアサイクルのポートと台数（GBFS）</td><td>公共交通オープンデータセンターの公開URL（ドコモ・バイクシェア、HELLO CYCLING 提供）</td><td>各提供元の公開データ。出典表示</td><td>東京駅から約1kmだけ。台数は2分で期限切れ</td></tr>
+</table>
+<p class="small">ODPT が提供するデータの利用条件は <a href="https://developer.odpt.org/terms" target="_blank" rel="noopener">公共交通オープンデータセンターの利用規約</a> で確かめてください。鉄道会社・バス会社のロゴやマークは使っていません。</p>
+
+<h2>地図・駅・スポット</h2>
+<table>
+  <tr><th>データ</th><th>出どころ</th><th>ライセンス</th></tr>
+  <tr><td>駅・路線・隣接・乗降人員・ホーム数・開業年</td><td><a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a></td><td>CC0 1.0</td></tr>
+  <tr><td>文化財・社寺・博物館・公園・ランドマーク・説明文（一行）</td><td>Wikidata</td><td>CC0 1.0</td></tr>
+  <tr><td>駅とスポットの概要（2〜3文）</td><td><a href="https://ja.wikipedia.org" target="_blank" rel="noopener">Wikipedia 日本語版</a></td><td>CC BY-SA 4.0（出典・リンク・継承）</td></tr>
+  <tr><td>写真</td><td><a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a></td><td>ファイルごとに異なる（各画像に表示）</td></tr>
+  <tr><td>公衆トイレ・AED・避難場所・Wi-Fi・駐輪場・赤ちゃんの駅・図書館・浸水予想・地価公示・イベント・監視カメラ</td><td><a href="https://portal.data.metro.tokyo.lg.jp/" target="_blank" rel="noopener">東京都オープンデータカタログ</a></td><td>CC BY 4.0（出典表示）</td></tr>
+  <tr><td>銭湯・温泉銭湯</td><td>東京銭湯マップ（東京都公衆浴場業生活衛生同業組合）</td><td>公開情報（事実データのみ）</td></tr>
+  <tr><td>チェーン店・住所検索</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a></td><td>ODbL 1.0</td></tr>
+  <tr><td>行政区域・公示地価</td><td>国土数値情報 N03・L01（国土交通省）</td><td>出典明示で利用可</td></tr>
+  <tr><td>標高・陰影起伏</td><td><a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">国土地理院 標高タイル</a></td><td>国土地理院コンテンツ利用規約</td></tr>
+</table>
+
+<h2>使っていないもの</h2>
+<p class="small">鉄道会社・バス会社・チェーン店のロゴ画像（商標・著作権）、グルメサイトの評価点（利用規約）、商用予約サイトの在庫データ。
+くわしい理由は <a href="DATA_SOURCES.md">DATA_SOURCES.md</a> と README にあります。</p>
+
+<h2>まだ載せていないもの（スコープ外）</h2>
+<p class="small">ほこナビ歩行空間ネットワークデータと東京駅周辺の屋内地図（通路・エレベータ・トイレ等）は、データの前処理が必要なため今回は載せていません。
+駅構内の情報は、駅カードの「駅構内」（<code>data/details/&lt;駅名&gt;.js</code>・現地調査）で扱っています。</p>
+
+<p class="small">プログラムは MIT ライセンス（<a href="LICENSE">LICENSE</a>）。データは上の表のとおり、それぞれ別のライセンスです。</p>
+</main>
+</body>
+</html>

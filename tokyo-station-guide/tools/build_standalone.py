@@ -21,7 +21,8 @@ def sub_script(m):
 html = re.sub(r'<script src="([^"]+)"></script>', sub_script, html)
 
 # 段階読み込み用のデータも、単一ファイル版では直接埋め込む
-DATA = ["network", "config", "lines_meta", "genres", "score", "areas",
+# ⚠ data/local_keys.js（ODPT の API キー・git 管理外）は絶対に同梱しない
+DATA = ["network", "config", "lines_meta", "genres", "score", "areas", "odpt_lines",
         "landmarks", "mappois", "heat", "admin", "relief", "poi", "descs",
         "tokyo_od2", "tokyo_od", "flood", "events", "chains", "user_pois"]
 blob = "\n".join(read("data/%s.js" % d) for d in DATA if os.path.exists("data/%s.js" % d))
@@ -41,8 +42,14 @@ for _rp, _mt in (("assets/relief.jpg", "image/jpeg"), ("assets/flood.png", "imag
         html = html.replace('"' + _rp + '"', '"data:' + _mt + ";base64," + _b + '"')
 
 # standalone 版は全部が1ファイルに入っているので、段階読み込みは使わず即起動する
-html = html.replace("<script>RG.startApp();</script>", "<script>RG.boot();</script>")
+# 地図が出たあとに東京駅周辺のポート・バス停を取りに行く処理（loader.js と同じ）も呼ぶ
+html = html.replace("<script>RG.startApp();</script>",
+                    "<script>RG.boot(); if (RG.Live && RG.Live.warm) setTimeout(function () { RG.Live.warm(); }, 1500);</script>")
 
+# キーが混ざっていないか最後に確かめる（プレースホルダ以外の consumerKey があれば止める）
+# 実キーは英数字だけの長い文字列。プレースホルダ（ACL_CONSUMERKEY）やソース内の正規表現には当たらない
+if re.search(r"consumerKey=[A-Za-z0-9]{16,}", html) or re.search(r"RG\.ODPT_KEY\s*=\s*[\"'][^\"']+[\"']", html):
+    raise SystemExit("⚠ API キーらしき文字列が含まれています。ビルドを中止しました")
 io.open("standalone.html", "w", encoding="utf-8").write(html)
 left = re.findall(r'(?:src|href)="((?!http)[^"]+)"', html)
 print("standalone.html", os.path.getsize(html and "standalone.html"), "bytes")

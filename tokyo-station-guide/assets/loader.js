@@ -15,6 +15,8 @@ var CORE = ["data/network.js", "data/config.js", "data/lines_meta.js",
    key    … 読み終わったあとに呼ぶ処理の名前
    label  … 進捗の表示 */
 var LAZY = [
+  { f: "data/odpt_lines.js", key: "odpt",    label: "運行情報の対応表" },
+  { f: "data/local_keys.js", key: "keys",    label: "設定" },   // git 管理外。無くてもよい
   { f: "data/landmarks.js", key: "landmarks", label: "ランドマーク" },
   { f: "data/mappois.js",   key: "pois",      label: "スポット" },
   { f: "data/heat.js",      key: "heat",      label: "区の統計" },
@@ -84,7 +86,15 @@ RG.startApp = function () {
     // 残りは順に。1つ読むごとに画面へ反映する
     var i = 0;
     function next() {
-      if (i >= LAZY.length) { setProgress("", 100); return; }
+      if (i >= LAZY.length) {
+        setProgress("", 100);
+        // ぜんぶ読めたら、東京駅周辺のポートとバス停を静かに取ってくる（通信できなければ何も出さない）
+        if (RG.Live && RG.Live.warm) {
+          if (window.requestIdleCallback) requestIdleCallback(function () { RG.Live.warm(); }, { timeout: 4000 });
+          else setTimeout(function () { RG.Live.warm(); }, 1200);
+        }
+        return;
+      }
       var item = LAZY[i++];
       setProgress(item.label + " をよみこんでいます", 42 + (i / LAZY.length) * 58);
       load(item.f).then(function () { refresh(item.key); })

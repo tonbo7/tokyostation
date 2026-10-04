@@ -203,6 +203,7 @@ RG.spotTip = function (p, P, isOwn) {
     (near ? '<div class="pp__n">🚉 ' + esc(near.t.n) + "駅から徒歩約" + near.min + "分（" +
        Math.round(near.km * 1000) + "m）</div>" : "") +
     (p.ad ? '<div class="pp__n">🏠 ' + esc(p.ad) + "</div>" : "") +
+    (p.live && p.no ? '<div class="pp__n pp__live">🚦 ' + esc(p.no) + "</div>" : "") +
     (vc ? '<div class="pp__v">✅ ' + vc + "回 行ったことがあります</div>" : "") +
     (p.g === "camera" && p.url ? '<div class="pp__cam">📹 クリックで映像が見られます</div>' : "") +
     '<div class="pp__a">' +
@@ -354,7 +355,8 @@ RG.showSpot = function (p) {
             near.map(function (x) { return x.t.n + "(" + Math.round(x.km * 1000) + "m)"; }).join("・")) +
       (p.sl ? exrow("🌏 注目度", p.sl + " 言語版", "Wikipediaで" + p.sl + "か国語の記事があります") : "") +
       (p.ad ? exrow("🏠 所在地", "—", p.ad) : "") +
-      (p.no ? exrow("ℹ️ 備考", "—", p.no) : "") +
+      (p.no && !p.live ? exrow("ℹ️ 備考", "—", p.no) : "") +
+      (p.live ? exrow("🚦 いまの状況", "—", p.no || "取得できませんでした") : "") +
       (p.st ? exrow("🚉 最寄り駅", p.st + "駅", "直線 約" + p.sd + "m") : "") +
       (p.fee ? exrow("💴 めやすの料金", "1人 ¥" + Number(p.fee).toLocaleString("ja-JP"),
                      "おでかけプランに入れると人数分で計算します") : "") +
@@ -611,6 +613,9 @@ function optCard(o, i, ctx) {
     '<div class="opt__bar"><i style="width:' + Math.min(100, o.minutes / 120 * 100) + '%"></i></div>' +
     '<div class="opt__badges">' + b.join("") + "</div>" +
     '<ul class="opt__d">' + (o.detail || []).map(function (d) { return "<li>" + esc(d) + "</li>"; }).join("") + "</ul>" +
+    (o.rail ? '<div class="opt__live" data-live-lines="' + esc((o.rail.lines || []).join("|")) + '">' +
+       '<span class="lvh">🚦 運行情報</span><span class="lvt">しらべています…</span></div>' : "") +
+    (/bike/.test(o.id) ? '<div class="opt__live" data-live-bike="1"></div>' : "") +
     (o.stopped ? "" :
       '<div class="opt__acts">' +
         '<button class="opt__b" type="button" data-add="' + i + '">🧳 リストに追加</button>' +
@@ -656,10 +661,12 @@ function showRoutes(destId) {
     '<span class="party__n">' + head2 + "人ぶんの合計も表示します</span></div>";
   var html = head + night + party + pareto(r) + sortBar +
     '<div class="opts">' + base.map(function (o) { return optCard(o, o.__i, ctx); }).join("") + "</div>" +
-    '<div class="disclaim">⚠ これはモデルによる<b>概算</b>です。時刻表・道路状況・バス系統・シェアサイクルの' +
-    "ポート位置は見ていません。前提の数字はすべて <code>data/config.js</code> にあります。" +
-    "移動前に各事業者の公式情報で必ず確認してください。</div>";
+    '<div class="disclaim">⚠ これはモデルによる<b>概算</b>です。時刻表・道路状況・バス系統は見ていません。' +
+    "電車の案に付く🚦運行情報と、東京駅周辺のシェアサイクルの台数だけは公共交通オープンデータセンター（ODPT）から" +
+    "取得したもので、取得時刻を添えています（取れないときは「取得できませんでした」）。" +
+    "前提の数字はすべて <code>data/config.js</code> にあります。移動前に各事業者の公式情報で必ず確認してください。</div>";
   var m = modal("移動手段をくらべる", html);
+  if (RG.Live && RG.Live.decorateRoutes) RG.Live.decorateRoutes(m, r, ctx);
   $("#pt-a", m).addEventListener("change", function () {
     RG.Plan.adults = Math.max(0, +this.value || 0); showRoutes(destId); });
   $("#pt-k", m).addEventListener("change", function () {

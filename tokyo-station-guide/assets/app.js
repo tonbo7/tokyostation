@@ -699,6 +699,7 @@ var Card = (function () {
       wikiIntro(s.n) +
       '<p class="plate__hl">' + esc(headline(s)) + "</p>" +
       (hops.length ? '<div class="hops"><span class="hops__l">となりの駅</span>' + hops.join("") + "</div>" : "") +
+      '<div class="live" data-live-st="' + esc(s.id) + '" hidden></div>' +
       '<div class="acts">' +
         '<button class="act act--from" type="button" data-from="' + esc(s.id) + '">📍 ここから出発</button>' +
         '<button class="act act--to" type="button" data-to="' + esc(s.id) + '">🧭 ここへ行く</button>' +
@@ -1041,6 +1042,7 @@ var Card = (function () {
     });
     var t2 = root.querySelector("[data-to]");
     if (t2) t2.addEventListener("click", function (e) { e.stopPropagation(); RG.showRoutes(t2.dataset.to); });
+    if (RG.Live && RG.Live.decorateStation) RG.Live.decorateStation(root, id);
     $$(".tab", root).forEach(function (b) {
       b.addEventListener("click", function () {
         tab = b.dataset.tab;
@@ -1221,6 +1223,7 @@ RG.boot = function () {
   Map.buildPOI();
   if (RG.initLinesUI) RG.initLinesUI();
   if (RG.initPlan) RG.initPlan();
+  if (RG.Live && RG.Live.init) RG.Live.init();
   $("#zin").addEventListener("click", function () { Map.zoom(1 / 1.45); });
   $("#zout").addEventListener("click", function () { Map.zoom(1.45); });
   $("#zfit").addEventListener("click", Map.fitAll);

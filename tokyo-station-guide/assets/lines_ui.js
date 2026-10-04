@@ -491,7 +491,13 @@ function openSettings() {
       "○ <code>assets/logos/&lt;路線名&gt;.png</code> を自分で置くと、そのアイコンが使われます<br>" +
       "× 鉄道会社のロゴ・シンボルマーク・キャラクター画像は<b>同梱していません</b>。" +
       "ダウンロードして配布する機能も付けていません<br>" +
-      "詳しい理由は README の「11.1」を読んでください</div></div>";
+      "詳しい理由は README の「11.1」を読んでください</div></div>" +
+
+    '<div class="set__sec"><h4>📄 出典とライセンス</h4>' +
+      '<p class="set__d">使っているデータの出どころと注意書きをまとめています。' +
+      '運行情報・バス・シェアサイクル（🚦）は公共交通オープンデータセンターのデータで、取得時刻を付けて表示します。</p>' +
+      '<div class="lnks"><a class="lnk" href="credits.html" target="_blank" rel="noopener"><span>📄</span>出典とライセンスを見る</a>' +
+      '<a class="lnk" href="https://github.com/tonbo7/tokyostation/issues" target="_blank" rel="noopener"><span>🐙</span>問題を知らせる（GitHub Issues）</a></div></div>';
   var m = RG.openModal("設定", html);
   renderWatch();
 

@@ -114,6 +114,16 @@ function railField(from, date) {
       }
     });
   }
+  /* 乗車駅からこの駅まで、どの路線に乗ったか（乗った順・重複なし）。運行情報を重ねるために使う */
+  function linesTo(id) {
+    var seen = {}, acc = [], cur = id, guard = 0;
+    while (cur && info[cur] && guard++ < 400) {
+      var L = info[cur].line;
+      if (L && !seen[L]) { seen[L] = 1; acc.push(L); }
+      cur = info[cur].prev;
+    }
+    return acc.reverse();
+  }
   var out = {};
   Object.keys(dist).forEach(function (id) {
     var i = info[id], yen = 0, note = [];
@@ -122,7 +132,7 @@ function railField(from, date) {
       yen += v; note.push(f.operator + " " + i.km[fk].toFixed(1) + "km → " + v + "円");
     });
     out[id] = { min: dist[id], yen: yen, transfers: i.transfers, board: i.board,
-                accessMin: i.access, fareNote: note, prev: i.prev };
+                accessMin: i.access, fareNote: note, prev: i.prev, lines: linesTo(id) };
   });
   return out;
 }
@@ -138,7 +148,8 @@ function railRoute(from, to, date) {
     var total = f.min + o.min;
     if (!best || total < best.minutes)
       best = { minutes: total, yen: f.yen, transfers: f.transfers, board: f.board,
-               alight: o.id, accessMin: f.accessMin, egressMin: o.min, fareNote: f.fareNote };
+               alight: o.id, accessMin: f.accessMin, egressMin: o.min, fareNote: f.fareNote,
+               lines: f.lines || [] };
   });
   return best;
 }
@@ -158,7 +169,7 @@ function baseOptions(from, to, date, aggr) {
     var bmin = bkm / mb.speed * 60 + mb.fixed;
     push({ id: "bike", m: mb, minutes: bmin, yen: bikeFare(bmin - mb.fixed / 2, date),
       detail: ["走る距離 約" + bkm.toFixed(1) + "km", mb.note,
-               "⚠ ポートの位置データは未搭載。近くにポートがあるか要確認"], conf: mb.conf });
+               "⚠ ポートの位置と台数は東京駅周辺（約1km）だけ取得します。それ以外は近くにポートがあるか要確認"], conf: mb.conf });
   }
 
   var mbs = C.modes.bus;
@@ -212,7 +223,7 @@ function combo(from, to, date, aggr) {
     if (r) {
       var wait = P.minutesToFirstTrain(date);
       out.push({ id: "wait_first", m: { label: "始発を待つ", emoji: "🌅", color: "#A58000" },
-        minutes: wait + r.minutes, yen: r.yen, kicker: "いちばん安い",
+        minutes: wait + r.minutes, yen: r.yen, rail: r, kicker: "いちばん安い",
         detail: ["始発（" + C.service.firstTrain + "ごろ）まで あと " + wait + " 分待つ",
                  "そこから電車で " + Math.round(r.minutes) + " 分",
                  "⚠ 始発時刻は概算です。駅・路線ごとの実際の時刻は各社の時刻表で確認してください",

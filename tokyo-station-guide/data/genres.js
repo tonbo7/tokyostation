@@ -45,6 +45,12 @@ RG.GENRES = [
           "クーポン施策の対象になることが多い施設です（施策の有無は各自治体で要確認）",
     src: "https://www.1010.or.jp/map/" },
 
+  /* ---- 公共交通オープンデータセンター（ODPT）。開いたときに東京駅周辺だけ取ってきます ---- */
+  { id: "sharecycle", e: "🚲", label: "シェアサイクル",   c: "#0055AD", enabled: true, live: true,
+    desc: "東京駅周辺（約1km）のポート。貸出・返却できる台数は開いたときに取ってきて、取得時刻を付けて出します（ODPT GBFS）" },
+  { id: "busstop",    e: "🚏", label: "バス停",           c: "#D2A400", enabled: true, live: true,
+    desc: "東京駅周辺（約650m）のバス停と系統。走っているバスは「🚦 いまの状況」から見られます（ODPT）" },
+
   /* ---- チェーン店（OpenStreetMap ODbL）。件数が多いので選んだときだけ出します ---- */
   { id: "cvs",     e: "🏪", label: "コンビニ",       c: "#00A040", enabled: true, optIn: true, chain: true,
     desc: "セブン-イレブン・ローソン・ファミリーマートなど。ブランドは下の一覧から選べます" },

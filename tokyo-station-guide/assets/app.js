@@ -356,8 +356,8 @@ var Map = (function () {
       setVar("--rs", ((3 + 3 * t) * upp).toFixed(3));              // 小さい駅 3→6px
       setVar("--rb", ((5.5 + 4.5 * t) * upp).toFixed(3));          // 大きい駅 5.5→10px
       // スポット・ランドマークも画面ピクセル基準（--poiscale は「1px が何単位か」×設定の倍率）
-      poiUpp = upp;
-      setVar("--poiscale", (1.125 * upp * poiScale).toFixed(4));
+      poiUpp = upp * (1 + 0.45 * t);                                 // 寄るほど少しだけ大きく（最大 +45%）
+      setVar("--poiscale", (1.125 * poiUpp * poiScale).toFixed(4));
       setVar("--lmk", (1.2 * upp).toFixed(4));
       // 路線の線：拡大しても画面上 7px までで止める
       setVar("--lnw", Math.min(3.4, 7 * upp).toFixed(3));

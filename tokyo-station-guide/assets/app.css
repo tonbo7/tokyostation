@@ -93,7 +93,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 }
 
 /* 路線図パーツ */
-.ln{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ln{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:calc(var(--lnw,3.4) * 1px)}
 .st-hit{fill:transparent;cursor:pointer}          /* 44px 相当の当たり判定 */
 .st-dot{fill:#fff;stroke:#333;stroke-width:3;pointer-events:none}
 .st-dot.ic{stroke-width:4}
@@ -578,7 +578,7 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 
 /* 路線強調モード */
 #map.linemode .ln{opacity:.13}
-#map.linemode .ln.on{opacity:1;stroke-width:5.2}
+#map.linemode .ln.on{opacity:1;stroke-width:calc(var(--lnw,3.4) * 1.5px)}
 #map.linemode .node{opacity:.2}
 #map.linemode .node.online{opacity:1}
 #map.linemode .node.online .st-lbl{display:block}
@@ -733,14 +733,15 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 /* --- ランドマーク（サイズ可変） --- */
 .lms{ --lmscale:1 }
 #map{ --lmscale:1 }
-.lm__c{fill:#fff;stroke:#C81432;stroke-width:calc(2 * var(--lmscale,1));
-  r:calc(6px * var(--lmscale,1))}
-.lm__e{font-size:calc(7.5px * var(--lmscale,1));pointer-events:none}
-.lm__l{font-size:calc(7px * var(--lmscale,1));font-weight:700;fill:#B0143C;pointer-events:none;
-  paint-order:stroke;stroke:#fff;stroke-width:calc(2.6px * var(--lmscale,1));stroke-linejoin:round}
-.lm--own .lm__c{stroke:#0055AD;stroke-width:calc(2.6 * var(--lmscale,1))}
+/* --lmk は「1px が何単位か」（ズーム段階ごとに更新）。ランドマークも画面ピクセル基準で大きさを保つ */
+.lm__c{fill:#fff;stroke:#C81432;stroke-width:calc(2 * var(--lmscale,1) * var(--lmk,1));
+  r:calc(6px * var(--lmscale,1) * var(--lmk,1))}
+.lm__e{font-size:calc(7.5px * var(--lmscale,1) * var(--lmk,1));pointer-events:none}
+.lm__l{font-size:calc(7px * var(--lmscale,1) * var(--lmk,1));font-weight:700;fill:#B0143C;pointer-events:none;
+  paint-order:stroke;stroke:#fff;stroke-width:calc(2.6px * var(--lmscale,1) * var(--lmk,1));stroke-linejoin:round}
+.lm--own .lm__c{stroke:#0055AD;stroke-width:calc(2.6 * var(--lmscale,1) * var(--lmk,1))}
 .lm--own .lm__l{fill:#0055AD}
-.lm:hover .lm__c,.lm:focus .lm__c{stroke-width:calc(3.4 * var(--lmscale,1))}
+.lm:hover .lm__c,.lm:focus .lm__c{stroke-width:calc(3.4 * var(--lmscale,1) * var(--lmk,1))}
 .lmcard__i{width:100%;max-height:190px;object-fit:cover;border-radius:10px;display:block;background:var(--control)}
 .lmcard__k b{color:var(--highlight)}
 
@@ -766,7 +767,7 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 #map{ --poiscale:1 }
 .poi{cursor:pointer}
 .poi.hide{display:none}
-.poi__c{fill:#fff;stroke:var(--pc,#888);stroke-width:calc(1.7 * var(--poiscale,1));
+.poi__c{fill:#fff;stroke:var(--pc,#888);stroke-width:calc(1.7 * var(--poiscale,1));r:calc(5px * var(--poiscale,1));
   r:calc(4.6px * var(--poiscale,1))}
 .poi__e{pointer-events:none}   /* 絵文字は画像（RG.emojiImg） */
 .poi--t0 .poi__c{stroke-width:calc(2.6 * var(--poiscale,1));r:calc(6.4px * var(--poiscale,1))}
@@ -1457,12 +1458,12 @@ body.night .lvh,body.night .live .lvt{color:#C7D0E6}
 
 /* ---------- 🚶 歩行空間・構内（ほこナビ） ---------- */
 .walk{pointer-events:none}
-.walk__h{stroke:#fff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
-.walk__p{stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.walk__h{stroke:#fff;stroke-width:6px;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.walk__p{stroke-width:3px;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
 .walk__p--ok{stroke:#197A4B}
-.walk__p--care{stroke:#D2A400;stroke-width:1.8}
-.walk__p--stairs{stroke:#FE3939;stroke-width:1.8}
-.walk__p--lift{stroke:#0079C2;stroke-width:2;stroke-dasharray:2 1.2}
+.walk__p--care{stroke:#D2A400;stroke-width:3.4px}
+.walk__p--stairs{stroke:#FE3939;stroke-width:3.4px}
+.walk__p--lift{stroke:#0079C2;stroke-width:3.8px;stroke-dasharray:6 4}
 #map.blank .walk{display:none}
 .sec.walk[hidden]{display:none}
 .poi--indoor .poi__c{stroke:#5A6472}

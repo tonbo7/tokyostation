@@ -217,6 +217,9 @@ RG.lineSequence = function (fromId, line, limit) {
 /* ================================================================ 路線図 */
 var Map = (function () {
   var svg, gE, gN, node = {}, selected = null, vb, wrap, lodTimer = null;
+  /* いちばん寄ったときの表示幅（地図単位）。90 → 36 で約2.5倍まで寄れる。
+     駅・スポット・ランドマーク・線の太さは画面ピクセル基準にしてあるので、寄っても巨大にならない */
+  var ZMIN = 36, poiUpp = 1;
 
   /* ===== 現在地マーカー ===== */
   var gMe = null;
@@ -352,6 +355,12 @@ var Map = (function () {
       setVar("--upp", upp.toFixed(4));
       setVar("--rs", ((3 + 3 * t) * upp).toFixed(3));              // 小さい駅 3→6px
       setVar("--rb", ((5.5 + 4.5 * t) * upp).toFixed(3));          // 大きい駅 5.5→10px
+      // スポット・ランドマークも画面ピクセル基準（--poiscale は「1px が何単位か」×設定の倍率）
+      poiUpp = upp;
+      setVar("--poiscale", (1.125 * upp * poiScale).toFixed(4));
+      setVar("--lmk", (1.2 * upp).toFixed(4));
+      // 路線の線：拡大しても画面上 7px までで止める
+      setVar("--lnw", Math.min(3.4, 7 * upp).toFixed(3));
     }
     var lv = $("#zlevel"); if (lv) lv.textContent = z < 1.6 ? "全体" : z < 5 ? "広域" : z < 14 ? "地区" : "詳細";
     poiLOD();
@@ -376,7 +385,7 @@ var Map = (function () {
   function ptrList() { return Object.keys(ptrs).map(function (k) { return ptrs[k]; }); }
   function clampVB(v) {
     var mx2 = VB.w * 0.25, my2 = VB.h * 0.25;
-    v.w = clamp(v.w, 90, VB.w * 1.6); v.h = v.w * (v.ar || (vb.h / vb.w));
+    v.w = clamp(v.w, ZMIN, VB.w * 1.6); v.h = v.w * (v.ar || (vb.h / vb.w));
     v.x = Math.max(-mx2, Math.min(VB.w - v.w + mx2, v.x));
     v.y = Math.max(-my2, Math.min(VB.h - v.h + my2, v.y));
     return v;
@@ -416,7 +425,7 @@ var Map = (function () {
       var d = Math.hypot(list[0].x - list[1].x, list[0].y - list[1].y) || 1;
       var c = { x: (list[0].x + list[1].x) / 2, y: (list[0].y + list[1].y) / 2 };
       var sc = g.d0 / d;                                            // 指を広げる → 1 より小さい → 拡大
-      var nw = clamp(g.vb.w * sc, 90, VB.w * 1.6), ratio = nw / g.vb.w;
+      var nw = clamp(g.vb.w * sc, ZMIN, VB.w * 1.6), ratio = nw / g.vb.w;
       // 最初に指の中心にあった点が、いまの指の中心に来るように
       var ux = g.vb.x + (g.c0.x - g.r.left) * k, uy = g.vb.y + (g.c0.y - g.r.top) * k;
       var v = { w: nw, ar: g.vb.ar };
@@ -539,7 +548,7 @@ var Map = (function () {
   }
   function zoomAt(cx, cy, k) {
     var r = wrap.getBoundingClientRect();
-    var nw = clamp(vb.w * k, 90, VB.w * 1.6), nh = nw * (vb.h / vb.w);
+    var nw = clamp(vb.w * k, ZMIN, VB.w * 1.6), nh = nw * (vb.h / vb.w);
     var fx = (cx - r.left) / r.width, fy = (cy - r.top) / r.height;
     vb.x += (vb.w - nw) * fx; vb.y += (vb.h - nh) * fy; vb.w = nw; vb.h = nh; apply();
   }
@@ -711,8 +720,7 @@ var Map = (function () {
     // 画面上のマス目に1件だけ残して重なりを防ぐ
     var wpx = Math.max(320, wrap.getBoundingClientRect().width);
     // 拡大するほどアイコンは小さく（画面が埋まらないように・描画も軽くなる）
-    var shrink = z >= 12 ? 0.72 : z >= 6 ? 0.86 : 1;
-    var eff = poiScale * shrink;
+    var eff = poiScale;
     var cell = (22 * eff) * (vb.w / wpx);
     var used = {}, show = [];
     for (var k = 0; k < cand.length && show.length < POOL_MAX; k++) {
@@ -735,7 +743,7 @@ var Map = (function () {
       var c0 = n.childNodes[0], e0 = n.childNodes[1], h0 = n.childNodes[2];
       c0.setAttribute("cx", t.x); c0.setAttribute("cy", t.y); c0.setAttribute("style", "--pc:" + g.c);
       // 絵文字は画像で。大きさは丸に合わせる（t0 は大きめ）
-      var iw = (t.ti === 0 ? 9.6 : 6.8) * eff, href = emojiImg(g.e);
+      var iw = (t.ti === 0 ? 14 : 10.5) * eff * poiUpp, href = emojiImg(g.e);   // 画面上 14px / 10.5px
       if (href) {
         if (e0.__e !== g.e) { e0.setAttribute("href", href); e0.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", href); e0.__e = g.e; }
         e0.setAttribute("x", t.x - iw / 2); e0.setAttribute("y", t.y - iw / 2);
@@ -743,7 +751,7 @@ var Map = (function () {
       }
       h0.setAttribute("cx", t.x); h0.setAttribute("cy", t.y);
     }
-    setVar("--poiscale", String(+eff.toFixed(3)));
+    setVar("--poiscale", (1.125 * poiUpp * poiScale).toFixed(4));
     svg.classList.toggle("poipick", !!picked);
     var cnt = $("#poicount");
     if (cnt) cnt.textContent = show.length + " / " + list.length;

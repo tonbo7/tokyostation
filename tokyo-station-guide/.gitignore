@@ -3,3 +3,5 @@ package-lock.json
 package.json
 *.log
 .DS_Store
+# ODPT の API キー（この端末だけ。絶対にコミットしない）
+data/local_keys.js

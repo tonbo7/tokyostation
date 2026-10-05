@@ -1342,6 +1342,7 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 
 .booterr{position:fixed;inset:0;z-index:99;background:rgba(255,255,255,.97);display:flex;
   flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center}
+.booterr[hidden]{display:none}   /* hidden 属性より display:flex が強く、常に出てしまっていたのを直す */
 .booterr b{font-size:16px}
 .booterr p{font-size:13px;color:var(--label);line-height:1.75;max-width:420px}
 .booterr button{height:40px;padding:0 20px;border-radius:9px;border:0;background:var(--lb900);
@@ -1372,6 +1373,88 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 .heatlegend{bottom:44px}
 @media (max-width:520px){ .qb__c,.qb__h{height:31px;font-size:12px} .heatlegend{max-width:180px} }
 
+/* ---------- 🚦 いまの状況（ODPT 運行情報・バス・シェアサイクル） ---------- */
+.hdr__btn--live{font-size:15px;padding:0 8px}
+.live{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:9px;padding:7px 9px;border-radius:8px;
+  background:var(--control);font-size:11px}
+.live[hidden]{display:none}
+.opt__live{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:4px 0 8px;font-size:11px}
+.opt__live:empty{display:none}
+.lvh{font-size:10.5px;color:var(--label);font-weight:600;margin-right:2px}
+.lvt{font-size:10.5px;color:var(--label)}
+.lvt--ng{color:#B4290F;font-weight:600}
+.lvc{display:inline-flex;align-items:center;gap:4px;padding:2px 8px 2px 6px;border-radius:999px;font-size:10.5px;
+  background:#fff;border:1px solid var(--border);color:var(--gray800);line-height:1.5}
+.lvc i{width:8px;height:8px;border-radius:50%;background:#9AA0A6;display:inline-block;flex:0 0 auto}
+.lvc b{font-weight:600}
+.lvc--normal i{background:var(--ok)}
+.lvc--normal b{color:var(--ok)}
+.lvc--delay{border-color:var(--ye600);background:#FFF6D9}
+.lvc--delay i{background:var(--ye600)}
+.lvc--delay b{color:#8A5A00}
+.lvc--suspend{border-color:var(--rd600);background:#FFECEC}
+.lvc--suspend i{background:var(--rd600)}
+.lvc--suspend b{color:#B4290F}
+.lvc--other{border-color:var(--lb600);background:var(--lb50)}
+.lvc--other i{background:var(--lb600)}
+.lvc--none{color:var(--label);border-style:dashed}
+.lvc--none i{background:#C9CCD3}
+.lvb{height:24px;padding:0 9px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:10.5px;color:var(--link)}
+.lvb:hover{background:var(--lb50);border-color:var(--lb400)}
+.ob--live{background:#FFF6D9;color:#8A5A00;border:1px solid var(--ye600)}
+.ob--live-suspend{background:#FFECEC;color:#B4290F;border-color:var(--rd600)}
+.ob--live-other{background:var(--lb50);color:var(--lb900);border-color:var(--lb400)}
+.lvrow{display:flex;flex-wrap:wrap;align-items:center;gap:5px;width:100%}
+.lvport{font-size:11px;color:var(--gray800);background:var(--control);border-radius:6px;padding:2px 7px}
+.lvport em{font-style:normal;font-weight:600}
+.pp__live{color:var(--lb900);font-weight:600}
+
+.lvload{font-size:12px;color:var(--label);padding:8px 0}
+.lvnote{background:#FFF6D9;border:1px dashed var(--ye600);border-radius:10px;padding:9px 12px;font-size:11.5px;line-height:1.65;margin-bottom:12px}
+.lvnote p{margin:0 0 4px}
+.lvnote p:last-child{margin:0}
+.lvs{border-top:1px solid var(--grid);padding:12px 0}
+.lvs__h{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.lvs__h b{font-size:13px}
+.lvs__h .lvb{margin-left:auto}
+.lvsrc{font-size:10.5px;color:var(--label);line-height:1.6;margin:8px 0 0}
+.lvok{font-size:12px;color:var(--ok);margin:4px 0;line-height:1.6}
+.lvng{font-size:12px;color:#B4290F;background:#FFECEC;border-radius:8px;padding:8px 10px;line-height:1.6;margin:4px 0}
+.lvbad{border:1px solid var(--rd200);background:#FFF7F7;border-radius:10px;padding:8px 10px}
+.lvbad__h{font-size:12px;font-weight:700;color:#B4290F;margin-bottom:6px}
+.lvbad__i{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px;padding:5px 0;border-top:1px solid #FFE1E1;font-size:11.5px;line-height:1.55}
+.lvbad__i:first-of-type{border-top:0}
+.lvbad__t{flex:1;min-width:160px;color:var(--gray800)}
+.lvbad__t i{font-style:normal;color:var(--label);font-size:10.5px}
+.lvall{margin-top:8px;font-size:12px}
+.lvall summary{cursor:pointer;color:var(--link);padding:4px 0}
+.lvop{padding:6px 0;border-top:1px solid var(--grid)}
+.lvop__h{font-size:11.5px;font-weight:600;color:var(--gray800);margin-bottom:4px;display:flex;gap:8px;align-items:center}
+.lvchips{display:flex;flex-wrap:wrap;gap:4px}
+.lvports,.lvstops{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:7px}
+.lvp,.lvst{border:1px solid var(--grid);border-left:4px solid var(--c,var(--lb900));border-radius:9px;padding:8px 10px;font-size:12px;background:#fff}
+.lvst{--c:#D2A400}
+.lvp__h,.lvst__h{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.lvp__h b,.lvst__h b{font-size:12.5px}
+.lvp__d{font-size:10.5px;color:var(--label);margin-left:auto}
+.lvp__n{display:flex;flex-wrap:wrap;gap:10px;margin:5px 0 6px;font-size:12px}
+.lvp__n b{font-family:var(--mono);font-size:15px}
+.lvst__no{font-size:10px;color:var(--label);border:1px solid var(--border);border-radius:4px;padding:0 4px}
+.lvst__p{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.lvtag{font-size:10.5px;background:var(--control);border-radius:5px;padding:1px 6px;color:var(--gray800)}
+.lvst__a{display:flex;flex-wrap:wrap;gap:6px}
+.lvbus{margin-top:7px;padding-top:6px;border-top:1px dashed var(--border);display:grid;gap:4px}
+.lvbus__i{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:11.5px}
+.lvbus__i b{color:var(--lb900)}
+.lvkey{margin-top:12px;font-size:12px;border-top:1px solid var(--grid);padding-top:10px}
+.lvkey summary{cursor:pointer;color:var(--link)}
+.lvkey p{font-size:11.5px;color:var(--gray800);line-height:1.6;margin:6px 0 8px}
+.lvkey .set__add{flex-wrap:wrap}
+.poi--sharecycle .poi__c{stroke:#0055AD}
+.poi--busstop .poi__c{stroke:#D2A400}
+body.night .live{background:#2C3550;color:#EAF0FF}
+body.night .lvh,body.night .live .lvt{color:#C7D0E6}
+
 </style>
 <meta name="description" content="東京23区669駅とスポット18,000件を、地図・スコア・ルート比較・おでかけプランで調べられる自由研究サイト。オープンデータだけで作りました。">
 <meta name="theme-color" content="#00224A">
@@ -1395,6 +1478,7 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
     </div>
     <button id="btn-hub" class="hdr__btn" type="button">中村橋</button>
     <button id="btn-plan" class="hdr__btn hdr__btn--plan" type="button" aria-label="おでかけプラン">🧳</button>
+    <button id="btn-live" class="hdr__btn hdr__btn--live" type="button" aria-label="いまの状況（運行情報・バス・シェアサイクル）" title="いまの状況">🚦</button>
     <button id="btn-set" class="hdr__btn" type="button" aria-label="設定">⚙️</button>
   </header>
 
@@ -2138,6 +2222,7 @@ var Card = (function () {
       wikiIntro(s.n) +
       '<p class="plate__hl">' + esc(headline(s)) + "</p>" +
       (hops.length ? '<div class="hops"><span class="hops__l">となりの駅</span>' + hops.join("") + "</div>" : "") +
+      '<div class="live" data-live-st="' + esc(s.id) + '" hidden></div>' +
       '<div class="acts">' +
         '<button class="act act--from" type="button" data-from="' + esc(s.id) + '">📍 ここから出発</button>' +
         '<button class="act act--to" type="button" data-to="' + esc(s.id) + '">🧭 ここへ行く</button>' +
@@ -2480,6 +2565,7 @@ var Card = (function () {
     });
     var t2 = root.querySelector("[data-to]");
     if (t2) t2.addEventListener("click", function (e) { e.stopPropagation(); RG.showRoutes(t2.dataset.to); });
+    if (RG.Live && RG.Live.decorateStation) RG.Live.decorateStation(root, id);
     $$(".tab", root).forEach(function (b) {
       b.addEventListener("click", function () {
         tab = b.dataset.tab;
@@ -2660,6 +2746,7 @@ RG.boot = function () {
   Map.buildPOI();
   if (RG.initLinesUI) RG.initLinesUI();
   if (RG.initPlan) RG.initPlan();
+  if (RG.Live && RG.Live.init) RG.Live.init();
   $("#zin").addEventListener("click", function () { Map.zoom(1 / 1.45); });
   $("#zout").addEventListener("click", function () { Map.zoom(1.45); });
   $("#zfit").addEventListener("click", Map.fitAll);
@@ -2919,6 +3006,16 @@ function railField(from, date) {
       }
     });
   }
+  /* 乗車駅からこの駅まで、どの路線に乗ったか（乗った順・重複なし）。運行情報を重ねるために使う */
+  function linesTo(id) {
+    var seen = {}, acc = [], cur = id, guard = 0;
+    while (cur && info[cur] && guard++ < 400) {
+      var L = info[cur].line;
+      if (L && !seen[L]) { seen[L] = 1; acc.push(L); }
+      cur = info[cur].prev;
+    }
+    return acc.reverse();
+  }
   var out = {};
   Object.keys(dist).forEach(function (id) {
     var i = info[id], yen = 0, note = [];
@@ -2927,7 +3024,7 @@ function railField(from, date) {
       yen += v; note.push(f.operator + " " + i.km[fk].toFixed(1) + "km → " + v + "円");
     });
     out[id] = { min: dist[id], yen: yen, transfers: i.transfers, board: i.board,
-                accessMin: i.access, fareNote: note, prev: i.prev };
+                accessMin: i.access, fareNote: note, prev: i.prev, lines: linesTo(id) };
   });
   return out;
 }
@@ -2943,7 +3040,8 @@ function railRoute(from, to, date) {
     var total = f.min + o.min;
     if (!best || total < best.minutes)
       best = { minutes: total, yen: f.yen, transfers: f.transfers, board: f.board,
-               alight: o.id, accessMin: f.accessMin, egressMin: o.min, fareNote: f.fareNote };
+               alight: o.id, accessMin: f.accessMin, egressMin: o.min, fareNote: f.fareNote,
+               lines: f.lines || [] };
   });
   return best;
 }
@@ -2963,7 +3061,7 @@ function baseOptions(from, to, date, aggr) {
     var bmin = bkm / mb.speed * 60 + mb.fixed;
     push({ id: "bike", m: mb, minutes: bmin, yen: bikeFare(bmin - mb.fixed / 2, date),
       detail: ["走る距離 約" + bkm.toFixed(1) + "km", mb.note,
-               "⚠ ポートの位置データは未搭載。近くにポートがあるか要確認"], conf: mb.conf });
+               "⚠ ポートの位置と台数は東京駅周辺（約1km）だけ取得します。それ以外は近くにポートがあるか要確認"], conf: mb.conf });
   }
 
   var mbs = C.modes.bus;
@@ -3017,7 +3115,7 @@ function combo(from, to, date, aggr) {
     if (r) {
       var wait = P.minutesToFirstTrain(date);
       out.push({ id: "wait_first", m: { label: "始発を待つ", emoji: "🌅", color: "#A58000" },
-        minutes: wait + r.minutes, yen: r.yen, kicker: "いちばん安い",
+        minutes: wait + r.minutes, yen: r.yen, rail: r, kicker: "いちばん安い",
         detail: ["始発（" + C.service.firstTrain + "ごろ）まで あと " + wait + " 分待つ",
                  "そこから電車で " + Math.round(r.minutes) + " 分",
                  "⚠ 始発時刻は概算です。駅・路線ごとの実際の時刻は各社の時刻表で確認してください",
@@ -3367,6 +3465,7 @@ RG.spotTip = function (p, P, isOwn) {
     (near ? '<div class="pp__n">🚉 ' + esc(near.t.n) + "駅から徒歩約" + near.min + "分（" +
        Math.round(near.km * 1000) + "m）</div>" : "") +
     (p.ad ? '<div class="pp__n">🏠 ' + esc(p.ad) + "</div>" : "") +
+    (p.live && p.no ? '<div class="pp__n pp__live">🚦 ' + esc(p.no) + "</div>" : "") +
     (vc ? '<div class="pp__v">✅ ' + vc + "回 行ったことがあります</div>" : "") +
     (p.g === "camera" && p.url ? '<div class="pp__cam">📹 クリックで映像が見られます</div>' : "") +
     '<div class="pp__a">' +
@@ -3518,7 +3617,8 @@ RG.showSpot = function (p) {
             near.map(function (x) { return x.t.n + "(" + Math.round(x.km * 1000) + "m)"; }).join("・")) +
       (p.sl ? exrow("🌏 注目度", p.sl + " 言語版", "Wikipediaで" + p.sl + "か国語の記事があります") : "") +
       (p.ad ? exrow("🏠 所在地", "—", p.ad) : "") +
-      (p.no ? exrow("ℹ️ 備考", "—", p.no) : "") +
+      (p.no && !p.live ? exrow("ℹ️ 備考", "—", p.no) : "") +
+      (p.live ? exrow("🚦 いまの状況", "—", p.no || "取得できませんでした") : "") +
       (p.st ? exrow("🚉 最寄り駅", p.st + "駅", "直線 約" + p.sd + "m") : "") +
       (p.fee ? exrow("💴 めやすの料金", "1人 ¥" + Number(p.fee).toLocaleString("ja-JP"),
                      "おでかけプランに入れると人数分で計算します") : "") +
@@ -3775,6 +3875,9 @@ function optCard(o, i, ctx) {
     '<div class="opt__bar"><i style="width:' + Math.min(100, o.minutes / 120 * 100) + '%"></i></div>' +
     '<div class="opt__badges">' + b.join("") + "</div>" +
     '<ul class="opt__d">' + (o.detail || []).map(function (d) { return "<li>" + esc(d) + "</li>"; }).join("") + "</ul>" +
+    (o.rail ? '<div class="opt__live" data-live-lines="' + esc((o.rail.lines || []).join("|")) + '">' +
+       '<span class="lvh">🚦 運行情報</span><span class="lvt">しらべています…</span></div>' : "") +
+    (/bike/.test(o.id) ? '<div class="opt__live" data-live-bike="1"></div>' : "") +
     (o.stopped ? "" :
       '<div class="opt__acts">' +
         '<button class="opt__b" type="button" data-add="' + i + '">🧳 リストに追加</button>' +
@@ -3820,10 +3923,12 @@ function showRoutes(destId) {
     '<span class="party__n">' + head2 + "人ぶんの合計も表示します</span></div>";
   var html = head + night + party + pareto(r) + sortBar +
     '<div class="opts">' + base.map(function (o) { return optCard(o, o.__i, ctx); }).join("") + "</div>" +
-    '<div class="disclaim">⚠ これはモデルによる<b>概算</b>です。時刻表・道路状況・バス系統・シェアサイクルの' +
-    "ポート位置は見ていません。前提の数字はすべて <code>data/config.js</code> にあります。" +
-    "移動前に各事業者の公式情報で必ず確認してください。</div>";
+    '<div class="disclaim">⚠ これはモデルによる<b>概算</b>です。時刻表・道路状況・バス系統は見ていません。' +
+    "電車の案に付く🚦運行情報と、東京駅周辺のシェアサイクルの台数だけは公共交通オープンデータセンター（ODPT）から" +
+    "取得したもので、取得時刻を添えています（取れないときは「取得できませんでした」）。" +
+    "前提の数字はすべて <code>data/config.js</code> にあります。移動前に各事業者の公式情報で必ず確認してください。</div>";
   var m = modal("移動手段をくらべる", html);
+  if (RG.Live && RG.Live.decorateRoutes) RG.Live.decorateRoutes(m, r, ctx);
   $("#pt-a", m).addEventListener("change", function () {
     RG.Plan.adults = Math.max(0, +this.value || 0); showRoutes(destId); });
   $("#pt-k", m).addEventListener("change", function () {
@@ -4465,7 +4570,13 @@ function openSettings() {
       "○ <code>assets/logos/&lt;路線名&gt;.png</code> を自分で置くと、そのアイコンが使われます<br>" +
       "× 鉄道会社のロゴ・シンボルマーク・キャラクター画像は<b>同梱していません</b>。" +
       "ダウンロードして配布する機能も付けていません<br>" +
-      "詳しい理由は README の「11.1」を読んでください</div></div>";
+      "詳しい理由は README の「11.1」を読んでください</div></div>" +
+
+    '<div class="set__sec"><h4>📄 出典とライセンス</h4>' +
+      '<p class="set__d">使っているデータの出どころと注意書きをまとめています。' +
+      '運行情報・バス・シェアサイクル（🚦）は公共交通オープンデータセンターのデータで、取得時刻を付けて表示します。</p>' +
+      '<div class="lnks"><a class="lnk" href="credits.html" target="_blank" rel="noopener"><span>📄</span>出典とライセンスを見る</a>' +
+      '<a class="lnk" href="https://github.com/tonbo7/tokyostation/issues" target="_blank" rel="noopener"><span>🐙</span>問題を知らせる（GitHub Issues）</a></div></div>';
   var m = RG.openModal("設定", html);
   renderWatch();
 
@@ -6200,6 +6311,760 @@ RG.showGeoHelp = function (err, uaTest) {
 })(window.RG);
 
 </script>
+<!-- ▼ いまの状況（ODPT 運行情報・バス・シェアサイクル）。API キーはここにも他のファイルにも書かない -->
+<script>
+/* =========================================================================
+   いまの状況（運行情報・バス・シェアサイクル） ―― 公共交通オープンデータセンター（ODPT）
+   ・鉄道の運行情報（odpt:TrainInformation）を比較ビューと駅カードに重ねる
+   ・東京駅周辺のバス停（odpt:BusstopPole）と走っているバス（odpt:Bus）
+   ・東京駅周辺のシェアサイクルのポート（GBFS・キー不要）
+   決まり：
+   ・動くデータには必ず「取得時刻」を付ける。期限が切れたキャッシュは現在値として出さない
+   ・取れなかったときは「取得できませんでした」。平常や空きありとは言わない
+   ・API キーはソースに書かない（acl:consumerKey=ACL_CONSUMERKEY はプレースホルダ）。ログにも出さない
+   ・取れない路線は「運行情報なし」として、行き方の案は消さない
+   ========================================================================= */
+(function (RG) {
+"use strict";
+var $ = RG.$, esc = RG.esc;
+function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+var L = {}; RG.Live = L;
+
+function cfg() { return RG.ODPT || null; }
+function pad(n) { return (n < 10 ? "0" : "") + n; }
+function hhmm(ms) { var d = new Date(ms); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+function ja(v) {
+  if (!v) return "";
+  if (typeof v === "string") return v;
+  if (Array.isArray(v)) {                       // GBFS 3.0: [{text, language}]
+    var hit = v.filter(function (x) { return x && x.language === "ja"; })[0] || v[0];
+    return hit ? (hit.text || "") : "";
+  }
+  return v.ja || v.en || "";
+}
+/* GBFS の時刻：2.x は UNIX 秒、3.0 は RFC3339 文字列 */
+function ts(v) {
+  if (v == null) return null;
+  if (typeof v === "number") return v < 1e12 ? v * 1000 : v;
+  if (/^\d+$/.test(v)) return +v < 1e12 ? +v * 1000 : +v;
+  var d = Date.parse(v); return isNaN(d) ? null : d;
+}
+function tail(id) { return String(id || "").split(":").pop(); }
+function haveMap() { return !!(cfg() && cfg().rail); }
+
+/* ------------------------------------------------------------- API キー */
+var KEY_LS = "rg_odpt_key";
+function getKey() {
+  try { var k = localStorage.getItem(KEY_LS); if (k) return k; } catch (e) {}
+  return RG.ODPT_KEY || "";
+}
+L.hasKey = function () { return !!getKey(); };
+L.setKey = function (k) {
+  k = (k || "").trim();
+  try { if (k) localStorage.setItem(KEY_LS, k); else localStorage.removeItem(KEY_LS); } catch (e) {}
+  mem = {};                                   // キーが変わったので取り直す
+};
+
+/* ----------------------------------------------------------- 取得の土台 */
+/* URL からキーを消してから使う（ログ・エラー表示用） */
+function safeUrl(u) { return String(u).replace(/acl:consumerKey=[^&]*/g, "acl:consumerKey=ACL_CONSUMERKEY"); }
+function withKey(url, key) {
+  if (!key) return url;
+  var p = cfg().endpoints.keyParam.replace("ACL_CONSUMERKEY", encodeURIComponent(key));
+  return url + (url.indexOf("?") >= 0 ? "&" : "?") + p;
+}
+function fetchJson(url, timeoutMs) {
+  timeoutMs = timeoutMs || 12000;
+  return new Promise(function (res, rej) {
+    var done = false;
+    function fail(msg) { if (done) return; done = true; rej(new Error(msg)); }
+    var timer = setTimeout(function () { fail("時間切れ"); if (ctrl) try { ctrl.abort(); } catch (e) {} }, timeoutMs);
+    var ctrl = window.AbortController ? new AbortController() : null;
+    if (window.fetch) {
+      fetch(url, { signal: ctrl ? ctrl.signal : undefined, credentials: "omit" }).then(function (r) {
+        if (!r.ok) { clearTimeout(timer); fail("HTTP " + r.status); return null; }
+        return r.json();
+      }).then(function (j) {
+        if (j === null) return;
+        clearTimeout(timer); if (!done) { done = true; res(j); }
+      }).catch(function (e) { clearTimeout(timer); fail(e && e.name === "AbortError" ? "時間切れ" : "通信エラー"); });
+      return;
+    }
+    var x = new XMLHttpRequest();
+    x.open("GET", url, true); x.timeout = timeoutMs;
+    x.onload = function () {
+      clearTimeout(timer);
+      if (x.status < 200 || x.status >= 300) { fail("HTTP " + x.status); return; }
+      try { res(JSON.parse(x.responseText)); done = true; } catch (e) { fail("JSON が読めません"); }
+    };
+    x.onerror = function () { clearTimeout(timer); fail("通信エラー"); };
+    x.ontimeout = function () { clearTimeout(timer); fail("時間切れ"); };
+    x.send();
+  });
+}
+/* 公開 API（キー不要）→ 失敗したらキー付き API（キーがある端末だけ）の順で試す */
+function odptGet(path) {
+  var E = cfg().endpoints, key = getKey();
+  return fetchJson(E["public"] + path).then(function (j) {
+    if (Array.isArray(j)) return j;
+    throw new Error("形式が違います");
+  }).catch(function (e1) {
+    if (!key) throw e1;
+    return fetchJson(withKey(E.keyed + path, key)).then(function (j) {
+      if (Array.isArray(j)) return j;
+      throw new Error("形式が違います");
+    });
+  });
+}
+
+/* キャッシュ：mem はこのページの間だけ。persist を付けたものは端末にも残す（位置など、変わりにくいもの） */
+var mem = {}, inflight = {};
+function fresh(k, ttl) { var c = mem[k]; return (c && Date.now() - c.t < ttl) ? c : null; }
+function store(k, data, persist) {
+  var c = { t: Date.now(), data: data }; mem[k] = c;
+  if (persist) try { localStorage.setItem("rg_live_" + k, JSON.stringify(c)); } catch (e) {}
+  return c;
+}
+function restore(k, ttl) {
+  try {
+    var raw = localStorage.getItem("rg_live_" + k); if (!raw) return null;
+    var c = JSON.parse(raw);
+    if (c && Date.now() - c.t < ttl) { mem[k] = c; return c; }
+  } catch (e) {}
+  return null;
+}
+function once(k, fn) {
+  if (inflight[k]) return inflight[k];
+  var p = fn().then(function (v) { delete inflight[k]; return v; }, function (e) { delete inflight[k]; throw e; });
+  inflight[k] = p; return p;
+}
+/* 「取れたか／いつか」を揃えて返す */
+function okResult(c) { return { ok: true, t: c.t, data: c.data }; }
+function ngResult(e, k) {
+  var c = mem[k];                             // 期限切れでも「前回いつ取れたか」は見せる（現在値としては使わない）
+  return { ok: false, error: (e && e.message) || "取得できませんでした", lastT: c ? c.t : null };
+}
+var lastError = {};
+function remember(k, e) { lastError[k] = { t: Date.now(), msg: (e && e.message) || "" }; }
+/* 失敗した直後（15秒以内）は同じ取得を繰り返さない。取り直すボタン（force）は別 */
+function recentFail(k, force) {
+  var le = lastError[k];
+  return !force && le && Date.now() - le.t < 15000 ? { ok: false, error: le.msg || "取得できませんでした", lastT: mem[k] ? mem[k].t : null } : null;
+}
+
+/* ============================================================ 鉄道運行情報 */
+var LEVEL = { normal: "平常", delay: "遅延", suspend: "見合わせ", other: "情報あり", none: "運行情報なし" };
+L.LEVEL = LEVEL;
+var RANK = { none: 0, normal: 1, other: 2, delay: 3, suspend: 4 };
+
+/* 1レコードを「平常／遅延／見合わせ／その他」に分ける */
+L.classify = function (rec) {
+  var st = ja(rec["odpt:trainInformationStatus"]), tx = ja(rec["odpt:trainInformationText"]);
+  var level;
+  if (!st) level = /見合わせ|運休|運転を?中止/.test(tx) ? "suspend" : "normal";   // 状態が無ければ平常（JR東日本など）
+  else if (/直通運転(を)?中止/.test(st)) level = "other";
+  else if (/見合わせ|運休|運転を?中止|不通/.test(st)) level = "suspend";
+  else if (/遅延|遅れ|ダイヤ乱れ|乱れ/.test(st)) level = "delay";
+  else if (/平常|通常/.test(st)) level = "normal";
+  else level = "other";
+  return { level: level, status: st, text: tx, date: rec["dc:date"] || rec["odpt:timeOfOrigin"] || null,
+           railway: rec["odpt:railway"] || null, operator: rec["odpt:operator"] || null };
+};
+function indexRail(list) {
+  var byRailway = {}, byOperator = {};
+  (list || []).forEach(function (rec) {
+    if (!rec || typeof rec !== "object") return;
+    var c = L.classify(rec);
+    var op = tail(c.operator);
+    (byOperator[op] = byOperator[op] || []).push(c);
+    if (c.railway) {
+      var cur = byRailway[c.railway];
+      // 同じ路線に複数あれば、重いほうを残す（上下線で別レコードの事業者がある）
+      if (!cur || RANK[c.level] > RANK[cur.level]) byRailway[c.railway] = c;
+    }
+  });
+  return { byRailway: byRailway, byOperator: byOperator };
+}
+L.indexRail = indexRail;
+
+L.fetchRail = function (force) {
+  var k = "rail", ttl = cfg().ttl.rail;
+  var c = !force && fresh(k, ttl);
+  if (c) return Promise.resolve(okResult(c));
+  var rf = recentFail(k, force); if (rf) return Promise.resolve(rf);
+  return once(k, function () {
+    return odptGet("odpt:TrainInformation").then(function (list) {
+      return okResult(store(k, indexRail(list)));
+    }).catch(function (e) { remember(k, e); return ngResult(e, k); });
+  });
+};
+
+/* 路線名 → ODPT の路線ID 一覧 */
+function idsOf(line) {
+  var m = cfg().rail[line];
+  if (!m) return [];
+  return Array.isArray(m) ? m : [m];
+}
+L.idsOf = idsOf;
+function railName(id, line) {
+  var N = cfg().railNames || {};
+  return N[id] || line;
+}
+/* 1路線の状況（複数系統なら系統ごと）。data は fetchRail の data */
+L.statusForLine = function (line, data) {
+  var ids = idsOf(line);
+  if (!ids.length) return [{ level: "none", label: LEVEL.none, name: line, reason: "この路線は ODPT に対応表がありません" }];
+  return ids.map(function (id) {
+    var op = id.split(".")[0], name = railName(id, line);
+    if (!data) return { level: "none", label: LEVEL.none, name: name, id: id };
+    var rec = data.byRailway["odpt.Railway:" + id];
+    if (rec) return { level: rec.level, label: rec.level === "other" ? (rec.status || LEVEL.other) : LEVEL[rec.level],
+                      name: name, id: id, text: rec.text, status: rec.status, date: rec.date };
+    var ops = data.byOperator[op];
+    if (ops && ops.length) {
+      var whole = ops.filter(function (r) { return !r.railway; })[0];
+      if (whole) return { level: whole.level, label: whole.level === "other" ? (whole.status || LEVEL.other) : LEVEL[whole.level],
+                          name: name, id: id, text: whole.text, status: whole.status, date: whole.date, wholeOp: true };
+    }
+    return { level: "none", label: LEVEL.none, name: name, id: id,
+             reason: ops ? "この路線の情報が届いていません" : "この事業者の情報が取れていません" };
+  });
+};
+function worst(items) {
+  var w = "none";
+  items.forEach(function (x) { if (RANK[x.level] > RANK[w]) w = x.level; });
+  return w;
+}
+L.worst = worst;
+
+function chip(x) {
+  var tip = [x.name, x.label, x.text ? x.text : "", x.reason || ""].filter(Boolean).join(" / ");
+  return '<span class="lvc lvc--' + x.level + '" title="' + esc(tip) + '">' +
+    '<i></i>' + esc(x.name) + " <b>" + esc(x.label) + "</b></span>";
+}
+L.chip = chip;
+function stamp(r, k) {
+  if (r.ok) return '<span class="lvt">' + hhmm(r.t) + " 取得</span>";
+  var le = lastError[k || "rail"];
+  return '<span class="lvt lvt--ng">取得できませんでした' + (le ? "（" + hhmm(le.t) + "）" : "") + "</span>";
+}
+
+/* ------------------------------------------ 比較ビューの各案に重ねる */
+L.decorateRoutes = function (root, result, ctx) {
+  if (!root || !haveMap()) return;
+  var slots = $$("[data-live-lines]", root);
+  if (slots.length) {
+    L.fetchRail().then(function (r) {
+      slots.forEach(function (s) {
+        var lines = (s.getAttribute("data-live-lines") || "").split("|").filter(Boolean);
+        if (!lines.length) { s.innerHTML = '<span class="lvt">乗る路線が分かりません</span>'; return; }
+        var items = [];
+        lines.forEach(function (ln) { items = items.concat(L.statusForLine(ln, r.ok ? r.data : null)); });
+        var w = worst(items);
+        s.innerHTML = '<span class="lvh">🚦 運行情報</span>' + items.map(chip).join("") + stamp(r) +
+          (!r.ok ? '<button class="lvb" type="button" data-live-retry="1">再取得</button>' : "");
+        var card = s.closest ? s.closest(".opt") : null;
+        if (card) {
+          var bd = card.querySelector(".opt__badges");
+          var old = bd && bd.querySelector(".ob--live"); if (old) old.parentNode.removeChild(old);
+          if (bd && (w === "suspend" || w === "delay" || w === "other")) {
+            var b = document.createElement("span");
+            b.className = "ob ob--live ob--live-" + w;
+            b.textContent = (w === "suspend" ? "⚠ 見合わせの路線あり" : w === "delay" ? "⚠ 遅延あり" : "ℹ 運行情報あり") +
+                            "（" + hhmm(r.t) + "）";
+            bd.appendChild(b);
+          }
+        }
+      });
+      $$("[data-live-retry]", root).forEach(function (b) {
+        b.addEventListener("click", function () { L.fetchRail(true).then(function () { L.decorateRoutes(root, result, ctx); }); });
+      });
+    });
+  }
+  // 自転車の案：東京駅周辺なら近いポートの台数を添える
+  var bikes = $$("[data-live-bike]", root);
+  if (bikes.length && ctx) {
+    var pts = [ctx.from, ctx.to].filter(Boolean);
+    var near = pts.some(function (p) { return distM(p[0], p[1], cfg().center.la, cfg().center.lo) <= cfg().radius.cycle + 400; });
+    if (!near) { bikes.forEach(function (s) { s.parentNode.removeChild(s); }); return; }
+    L.ports().then(function (res) {
+      bikes.forEach(function (s) {
+        if (!res.info.ok) { s.innerHTML = '<span class="lvh">🚲 ポート</span><span class="lvt lvt--ng">取得できませんでした</span>'; return; }
+        var html = pts.map(function (p, i) {
+          var list = res.list.slice().map(function (q) { q.__d = distM(p[0], p[1], q.la, q.lo); return q; })
+            .filter(function (q) { return q.__d <= 600; }).sort(function (a, b) { return a.__d - b.__d; }).slice(0, 2);
+          if (!list.length) return "";
+          return '<div class="lvrow"><span class="lvh">' + (i === 0 && pts.length > 1 ? "出発側" : "到着側") + "のポート</span>" +
+            list.map(function (q) { return portLine(q, res.status); }).join("") + "</div>";
+        }).join("");
+        s.innerHTML = html ? html + stampCycle(res) : "";
+      });
+    });
+  }
+};
+function portLine(q, st) {
+  var v = st.ok ? st.data.by[q.key] : null;
+  var n = v ? ("貸出可 <b>" + v.bikes + "</b> 台／返却可 <b>" + v.docks + "</b> 台" +
+               (v.renting === false ? "・貸出停止中" : "")) : '<span class="lvt--ng">台数は取得できませんでした</span>';
+  return '<span class="lvport"><em>' + esc(q.n) + "</em>" + (q.__d != null ? "（約" + Math.round(q.__d) + "m）" : "") + " " + n + "</span>";
+}
+function stampCycle(res) {
+  return res.status.ok ? '<span class="lvt">台数 ' + hhmm(res.status.t) + " 取得</span>"
+                       : '<span class="lvt lvt--ng">台数は取得できませんでした</span>';
+}
+
+/* ------------------------------------------ 駅カード */
+L.decorateStation = function (root, id) {
+  if (!root || !haveMap()) return;
+  var host = root.querySelector('[data-live-st="' + id + '"]');
+  var s = RG.byId && RG.byId[id];
+  if (!host || !s) return;
+  var lines = (s.ls || []).filter(function (ln) { return idsOf(ln).length; });
+  var unmapped = (s.ls || []).length - lines.length;
+  if (!lines.length) { host.hidden = true; return; }
+  host.hidden = false;
+  host.innerHTML = '<span class="lvh">🚦 運行情報</span><span class="lvt">しらべています…</span>';
+  L.fetchRail().then(function (r) {
+    if (!root.querySelector('[data-live-st="' + id + '"]')) return;        // すでに別の駅に切り替わっている
+    var items = [];
+    lines.forEach(function (ln) { items = items.concat(L.statusForLine(ln, r.ok ? r.data : null)); });
+    var seen = {}, uniq = items.filter(function (x) { if (seen[x.id || x.name]) return false; seen[x.id || x.name] = 1; return true; });
+    var shown = uniq.filter(function (x) { return x.level !== "none"; });
+    var noneN = uniq.length - shown.length + unmapped;
+    var body;
+    if (!r.ok) body = '<span class="lvt lvt--ng">取得できませんでした</span>';
+    else if (!shown.length) body = '<span class="lvt">この駅の路線の運行情報は届いていません</span>';
+    else body = shown.map(chip).join("");
+    host.innerHTML = '<span class="lvh">🚦 運行情報</span>' + body +
+      (r.ok ? '<span class="lvt">' + hhmm(r.t) + " 取得</span>" : stamp(r)) +
+      (noneN && r.ok ? '<span class="lvt">他 ' + noneN + " 路線・系統は運行情報なし</span>" : "") +
+      '<button class="lvb" type="button" data-live-open="1">' + (r.ok ? "いまの状況 ▸" : "再取得 ▸") + "</button>";
+    var b = host.querySelector("[data-live-open]");
+    if (b) b.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (!r.ok) { L.fetchRail(true).then(function () { L.decorateStation(root, id); }); return; }
+      L.open();
+    });
+  });
+};
+
+/* ========================================================== シェアサイクル */
+function distM(la1, lo1, la2, lo2) { return RG.hav([la1, lo1], [la2, lo2]) * 1000; }
+/* gbfs.json から station_information / station_status の URL を探す（GBFS 2.x の言語キー、3.x の直接形式の両方） */
+L.parseGbfs = function (root) {
+  var out = {};
+  if (!root || !root.data) return out;
+  var d = root.data, feeds = null;
+  if (Array.isArray(d.feeds)) feeds = d.feeds;
+  else {
+    var langs = Object.keys(d);
+    var pick = langs.indexOf("ja") >= 0 ? "ja" : langs.indexOf("en") >= 0 ? "en" : langs[0];
+    if (pick && d[pick] && Array.isArray(d[pick].feeds)) feeds = d[pick].feeds;
+  }
+  (feeds || []).forEach(function (f) { if (f && f.name && f.url) out[f.name] = f.url; });
+  return out;
+};
+function gbfsFeeds(p) {
+  var k = "gbfs_" + p.id;
+  var c = fresh(k, cfg().ttl.cycleInfo) || restore(k, cfg().ttl.cycleInfo);
+  if (c) return Promise.resolve(c.data);
+  return fetchJson(p.url).then(function (j) { var f = L.parseGbfs(j); if (!f.station_information) throw new Error("feed がありません"); store(k, f, true); return f; });
+}
+/* 東京駅周辺のポート（位置は1日キャッシュ） */
+L.fetchCycleInfo = function (force) {
+  var k = "cycle_info", ttl = cfg().ttl.cycleInfo;
+  var c = !force && (fresh(k, ttl) || restore(k, ttl));
+  if (c) return Promise.resolve(okResult(c));
+  var rf = recentFail(k, force); if (rf) return Promise.resolve(rf);
+  return once(k, function () {
+    var C = cfg().center, R = cfg().radius.cycle, all = [], anyOk = false, lastE = null;
+    return Promise.all(cfg().gbfs.map(function (p) {
+      return gbfsFeeds(p).then(function (f) { return fetchJson(f.station_information); }).then(function (j) {
+        anyOk = true;
+        ((j && j.data && j.data.stations) || []).forEach(function (s) {
+          if (s.lat == null || s.lon == null) return;
+          var d = distM(C.la, C.lo, +s.lat, +s.lon);
+          if (d > R) return;
+          all.push({ key: p.id + ":" + s.station_id, sid: String(s.station_id), prov: p.id, provLabel: p.label, c: p.c,
+                     n: ja(s.name) || s.short_name || ("ポート " + s.station_id), la: +s.lat, lo: +s.lon,
+                     cap: s.capacity != null ? +s.capacity : null, ad: ja(s.address) || null, d: Math.round(d) });
+        });
+      }).catch(function (e) { lastE = e; });
+    })).then(function () {
+      if (!anyOk) { var e = lastE || new Error("取得できませんでした"); remember(k, e); return ngResult(e, k); }
+      all.sort(function (a, b) { return a.d - b.d; });
+      return okResult(store(k, all, true));
+    });
+  });
+};
+/* 台数（2分で期限切れ。端末には残さない） */
+L.fetchCycleStatus = function (force) {
+  var k = "cycle_status", ttl = cfg().ttl.cycleStatus;
+  var c = !force && fresh(k, ttl);
+  if (c) return Promise.resolve(okResult(c));
+  var rf = recentFail(k, force); if (rf) return Promise.resolve(rf);
+  return once(k, function () {
+    var by = {}, updated = {}, anyOk = false, lastE = null;
+    return Promise.all(cfg().gbfs.map(function (p) {
+      return gbfsFeeds(p).then(function (f) {
+        if (!f.station_status) throw new Error("status feed がありません");
+        return fetchJson(f.station_status);
+      }).then(function (j) {
+        anyOk = true;
+        if (j && j.last_updated) updated[p.id] = ts(j.last_updated);
+        ((j && j.data && j.data.stations) || []).forEach(function (s) {
+          by[p.id + ":" + s.station_id] = {
+            bikes: s.num_bikes_available != null ? +s.num_bikes_available : (s.num_vehicles_available != null ? +s.num_vehicles_available : null),
+            docks: s.num_docks_available != null ? +s.num_docks_available : null,
+            renting: s.is_renting == null ? null : !!+s.is_renting,
+            returning: s.is_returning == null ? null : !!+s.is_returning,
+            reported: ts(s.last_reported)
+          };
+        });
+      }).catch(function (e) { lastE = e; });
+    })).then(function () {
+      if (!anyOk) { var e = lastE || new Error("取得できませんでした"); remember(k, e); return ngResult(e, k); }
+      return okResult(store(k, { by: by, updated: updated }));
+    });
+  });
+};
+/* 位置＋台数をまとめて */
+L.ports = function (force) {
+  return L.fetchCycleInfo(force).then(function (info) {
+    if (!info.ok) return { info: info, status: { ok: false }, list: [] };
+    return L.fetchCycleStatus(force).then(function (st) {
+      return { info: info, status: st, list: info.data };
+    });
+  });
+};
+
+/* ================================================================== バス */
+var BUSOP = { Toei: "都営バス", KeiseiBus: "京成バス", KokusaiKogyoBus: "国際興業バス", KantoBus: "関東バス",
+              SeibuBus: "西武バス", TokyuBus: "東急バス", OdakyuBus: "小田急バス", KeioBus: "京王バス",
+              TobuBus: "東武バス", KeikyuBus: "京急バス", NishiTokyoBus: "西東京バス", HinomaruBus: "日の丸自動車" };
+function busOpName(id) { var t = tail(id); return BUSOP[t] || t; }
+function patternName(id, names) {
+  if (names && names[id] && names[id].n) return names[id].n;
+  var parts = tail(id).split(".");            // Toei.To01.1101.1 → To01
+  return parts[1] || tail(id);
+}
+/* 東京駅周辺のバス停（1日キャッシュ）。系統名も一緒に取る */
+L.fetchBusStops = function (force) {
+  var k = "bus_stops", ttl = cfg().ttl.busStops;
+  var c = !force && (fresh(k, ttl) || restore(k, ttl));
+  if (c) return Promise.resolve(okResult(c));
+  var rf = recentFail(k, force); if (rf) return Promise.resolve(rf);
+  return once(k, function () {
+    var C = cfg().center, R = cfg().radius.bus;
+    return odptGet("places/odpt:BusstopPole?lon=" + C.lo + "&lat=" + C.la + "&radius=" + R).then(function (list) {
+      var poles = [], pats = {};
+      list.forEach(function (p) {
+        var la = p["geo:lat"], lo = p["geo:long"];
+        if (la == null || lo == null) return;
+        var ids = [].concat(p["odpt:busroutePattern"] || []);
+        ids.forEach(function (x) { pats[x] = 1; });
+        poles.push({ id: p["owl:sameAs"] || p["@id"], n: ja(p["dc:title"]) || ja(p["odpt:busstopPoleTitle"]) || "バス停",
+                     no: p["odpt:busstopPoleNumber"] || null, la: +la, lo: +lo,
+                     ops: [].concat(p["odpt:operator"] || []).map(busOpName),
+                     pats: ids, d: Math.round(distM(C.la, C.lo, +la, +lo)) });
+      });
+      poles.sort(function (a, b) { return a.d - b.d; });
+      var ids = Object.keys(pats).slice(0, 80);
+      if (!ids.length) return { poles: poles, names: {} };
+      // 系統の名前と停留所の順番（「あと何停留所か」を出すのに使う）
+      return odptGet("odpt:BusroutePattern?owl:sameAs=" + encodeURIComponent(ids.join(","))).then(function (ps) {
+        var names = {};
+        ps.forEach(function (q) {
+          var order = {};
+          (q["odpt:busstopPoleOrder"] || []).forEach(function (o) { order[o["odpt:busstopPole"]] = +o["odpt:index"]; });
+          names[q["owl:sameAs"]] = { n: ja(q["dc:title"]) || "", note: ja(q["odpt:note"]) || "", dir: q["odpt:direction"] || "", order: order };
+        });
+        return { poles: poles, names: names };
+      }).catch(function () { return { poles: poles, names: {} }; });
+    }).then(function (data) {
+      return okResult(store(k, data, true));
+    }).catch(function (e) { remember(k, e); return ngResult(e, k); });
+  });
+};
+/* いま走っているバス（指定した系統だけ） */
+L.fetchBuses = function (patternIds) {
+  var ids = (patternIds || []).slice(0, 12);
+  if (!ids.length) return Promise.resolve({ ok: true, t: Date.now(), data: [] });
+  var k = "bus_" + ids.join(","), ttl = cfg().ttl.bus;
+  var c = fresh(k, ttl);
+  if (c) return Promise.resolve(okResult(c));
+  return once(k, function () {
+    return odptGet("odpt:Bus?odpt:busroutePattern=" + encodeURIComponent(ids.join(","))).then(function (list) {
+      var out = list.map(function (b) {
+        return { pat: b["odpt:busroutePattern"], no: b["odpt:busNumber"] || "", from: b["odpt:fromBusstopPole"] || null,
+                 to: b["odpt:toBusstopPole"] || null, date: b["dc:date"] || null, occ: tail(b["odpt:occupancyStatus"] || "") };
+      });
+      return okResult(store(k, out));
+    }).catch(function (e) { remember("bus", e); return ngResult(e, k); });
+  });
+};
+var OCC = { EMPTY: "空いています", MANY_SEATS_AVAILABLE: "席に余裕あり", FEW_SEATS_AVAILABLE: "席は少なめ",
+            STANDING_ROOM_ONLY: "立っている人あり", CRUSHED_STANDING_ROOM_ONLY: "とても混んでいます", FULL: "満員",
+            ManySeatsAvailable: "席に余裕あり", FewSeatsAvailable: "席は少なめ", StandingRoomOnly: "立っている人あり",
+            CrushedStandingRoomOnly: "とても混んでいます", Full: "満員", Empty: "空いています" };
+
+/* ============================================================ 地図に載せる */
+var poiReg = {};
+function upsertPoi(key, make) {
+  var p = poiReg[key];
+  if (p) { make(p); return false; }
+  p = { i: "lv:" + key, live: 1, s: 3.5, ti: 1 }; make(p);
+  poiReg[key] = p;
+  if (!RG.MAPPOI) RG.MAPPOI = [];
+  RG.MAPPOI.push(p);
+  return true;
+}
+function mergePois(ports, status, stops) {
+  var added = false, C = cfg(), t;
+  if (ports && ports.ok) {
+    t = status && status.ok ? hhmm(status.t) : null;
+    ports.data.forEach(function (q) {
+      var v = status && status.ok ? status.data.by[q.key] : null;
+      added = upsertPoi("cycle:" + q.key, function (p) {
+        p.n = q.n; p.la = q.la; p.lo = q.lo; p.g = "sharecycle"; p.t = q.provLabel; p.ad = q.ad;
+        p.no = v ? ("貸出可 " + v.bikes + " 台／返却可 " + v.docks + " 台" + (v.renting === false ? "・貸出停止中" : "") +
+                    "（" + t + " 取得）")
+                 : "台数は取得できませんでした";
+        p.srcNote = "出典: 公共交通オープンデータセンター GBFS（" + q.provLabel + "）。台数は開いたときに取り直します";
+      }) || added;
+    });
+  }
+  if (stops && stops.ok) {
+    stops.data.poles.forEach(function (q) {
+      added = upsertPoi("bus:" + q.id, function (p) {
+        p.n = q.n + (q.no ? "（" + q.no + "）" : ""); p.la = q.la; p.lo = q.lo; p.g = "busstop";
+        p.t = q.ops.join("・") || "バス停";
+        p.no = q.pats.length ? q.pats.map(function (x) { return patternName(x, stops.data.names); })
+                 .filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 8).join("・") + " 系統"
+             : "系統の情報なし";
+        p.srcNote = "出典: 公共交通オープンデータセンター（odpt:BusstopPole）。位置は " + hhmm(stops.t) + " に取得";
+      }) || added;
+    });
+  }
+  if (added && RG.Map) {
+    try {
+      if (RG.Map.rebuildPOI) RG.Map.rebuildPOI();
+      if (RG.resetSearchIndex) RG.resetSearchIndex();
+      if (RG.rebuildRail) RG.rebuildRail();
+    } catch (e) { if (window.console) console.warn("いまの状況の地図反映でつまずきました", e); }
+  }
+}
+L.mergePois = mergePois;
+
+/* 起動後、手が空いたら東京駅周辺のポートとバス停だけを取ってくる（1回だけ） */
+var warmed = false;
+L.warm = function () {
+  if (warmed || !cfg()) return; warmed = true;
+  L.ports().then(function (res) { mergePois(res.info, res.status, null); });
+  L.fetchBusStops().then(function (st) { mergePois(null, null, st); });
+};
+
+/* ============================================================== パネル */
+var panel = null, timer = null;
+function noteBox() {
+  var C = cfg();
+  return '<div class="lvnote">' + C.notice.map(function (s) { return "<p>" + esc(s) + "</p>"; }).join("") +
+    '<p><a href="' + esc(C.issues) + '" target="_blank" rel="noopener">GitHub Issues ↗</a>　' +
+    '<a href="credits.html" target="_blank" rel="noopener">出典とライセンス ↗</a></p></div>';
+}
+function secHead(title, r, k, retryKey) {
+  return '<div class="lvs__h"><b>' + title + "</b>" + (r ? stamp(r, k) : "") +
+    '<button class="lvb" type="button" data-lv-reload="' + retryKey + '">↻ 取り直す</button></div>';
+}
+function railSection(r) {
+  var C = cfg(), ops = C.operators, byOp = {};
+  Object.keys(C.rail).forEach(function (line) {
+    idsOf(line).forEach(function (id) {
+      var op = id.split(".")[0];
+      byOp[op] = byOp[op] || {};
+      if (!byOp[op][id]) byOp[op][id] = { id: id, name: railName(id, line) };
+    });
+  });
+  var body;
+  if (!r.ok) {
+    body = '<p class="lvng">運行情報を取得できませんでした（' + esc(r.error || "") + "）。" +
+      "通信の状態を確かめて「取り直す」を押してください。この間は<b>平常とも遅延とも言えません</b>。</p>";
+  } else {
+    var bad = [], okOps = [];
+    Object.keys(ops).forEach(function (op) {
+      var rails = byOp[op]; if (!rails) return;
+      var items = Object.keys(rails).map(function (id) {
+        return L.statusForLine(Object.keys(C.rail).filter(function (ln) { return idsOf(ln).indexOf(id) >= 0; })[0], r.data)
+          .filter(function (x) { return x.id === id; })[0];
+      }).filter(Boolean);
+      var hasData = items.some(function (x) { return x.level !== "none"; });
+      items.forEach(function (x) { if (x.level === "delay" || x.level === "suspend" || x.level === "other") bad.push({ op: op, x: x }); });
+      okOps.push({ op: op, items: items, hasData: hasData });
+    });
+    body = (bad.length
+      ? '<div class="lvbad"><div class="lvbad__h">⚠ 乱れている路線（' + bad.length + "）</div>" + bad.map(function (b) {
+          return '<div class="lvbad__i">' + chip(b.x) + '<span class="lvbad__t">' + esc(b.x.text || b.x.status || "") +
+            (b.x.date ? '<i>（情報 ' + esc(String(b.x.date).replace(/^.*T(\d\d:\d\d).*$/, "$1")) + "）</i>" : "") + "</span></div>";
+        }).join("") + "</div>"
+      : '<p class="lvok">✅ 対応している路線に、遅延・見合わせの情報はありません（' + hhmm(r.t) + " 時点）。</p>") +
+      '<details class="lvall"><summary>全路線を見る</summary>' + okOps.map(function (o) {
+        return '<div class="lvop"><div class="lvop__h">' + esc(ops[o.op] || o.op) +
+          (o.hasData ? "" : '<span class="lvt lvt--ng">情報が取れていません</span>') + "</div>" +
+          '<div class="lvchips">' + o.items.map(chip).join("") + "</div></div>";
+      }).join("") + "</details>";
+  }
+  return '<section class="lvs" id="lv-rail">' + secHead("🚃 鉄道の運行情報", r, "rail", "rail") + body +
+    '<p class="lvsrc">出典: 公共交通オープンデータセンター（odpt:TrainInformation）。' +
+    "対応表にない路線（東海道新幹線など）は「運行情報なし」になります。</p></section>";
+}
+function cycleSection(res) {
+  var C = cfg(), info = res.info, st = res.status, body;
+  if (!info.ok) body = '<p class="lvng">ポートの一覧を取得できませんでした（' + esc(info.error || "") + "）。</p>";
+  else if (!res.list.length) body = '<p class="lvok">' + C.center.label + "から約" + C.radius.cycle + "m にポートが見つかりませんでした。</p>";
+  else {
+    body = '<div class="lvports">' + res.list.slice(0, 40).map(function (q) {
+      var v = st.ok ? st.data.by[q.key] : null;
+      return '<div class="lvp" style="--c:' + q.c + '"><div class="lvp__h"><b>' + esc(q.n) + "</b>" +
+        '<span class="lvp__d">' + q.d + "m・" + esc(q.provLabel) + "</span></div>" +
+        (v ? '<div class="lvp__n"><span>🚲 貸出可 <b>' + (v.bikes == null ? "—" : v.bikes) + "</b> 台</span>" +
+             "<span>🅿️ 返却可 <b>" + (v.docks == null ? "—" : v.docks) + "</b> 台</span>" +
+             (v.renting === false ? '<span class="lvt--ng">貸出停止中</span>' : "") + "</div>"
+           : '<div class="lvp__n lvt--ng">台数は取得できませんでした</div>') +
+        '<button class="lvb" type="button" data-lv-go="' + q.la + "," + q.lo + '">地図で見る</button></div>';
+    }).join("") + "</div>" + (res.list.length > 40 ? '<p class="lvt">近い順に 40 か所まで表示</p>' : "");
+  }
+  var head = secHead("🚲 シェアサイクル（" + C.center.label + "周辺 約" + C.radius.cycle + "m）", st.ok ? st : info, "cycle_status", "cycle");
+  return '<section class="lvs" id="lv-cycle">' + head + body +
+    '<p class="lvsrc">出典: 公共交通オープンデータセンター GBFS（キー不要の公開URL）。台数は約2分で期限切れになり、取り直すまで現在値としては出しません。</p></section>';
+}
+function busSection(r, bus) {
+  var C = cfg(), body;
+  if (!r.ok) body = '<p class="lvng">バス停の一覧を取得できませんでした（' + esc(r.error || "") + "）。" +
+    (L.hasKey() ? "" : "公開 API にバスのデータが無い場合は、ODPT の API キーが必要です（下の「API キー」）。") + "</p>";
+  else if (!r.data.poles.length) body = '<p class="lvok">' + C.center.label + "から約" + C.radius.bus + "m にバス停が見つかりませんでした。</p>";
+  else {
+    body = '<div class="lvstops">' + r.data.poles.slice(0, 40).map(function (q, i) {
+      var pats = q.pats.map(function (x) { return patternName(x, r.data.names); })
+        .filter(function (x, k, a) { return a.indexOf(x) === k; });
+      var open = bus && bus.poleId === q.id;
+      return '<div class="lvst' + (open ? " open" : "") + '"><div class="lvst__h"><b>' + esc(q.n) + "</b>" +
+        (q.no ? '<span class="lvst__no">' + esc(q.no) + "</span>" : "") +
+        '<span class="lvp__d">' + q.d + "m・" + esc(q.ops.join("・") || "—") + "</span></div>" +
+        '<div class="lvst__p">' + (pats.length ? pats.map(function (x) { return '<span class="lvtag">' + esc(x) + "</span>"; }).join("") : '<span class="lvt">系統の情報なし</span>') + "</div>" +
+        '<div class="lvst__a">' +
+          (q.pats.length ? '<button class="lvb" type="button" data-lv-bus="' + i + '">🚌 いま走っているバス</button>' : "") +
+          '<button class="lvb" type="button" data-lv-go="' + q.la + "," + q.lo + '">地図で見る</button></div>' +
+        (open ? busList(q, bus, r.data.names) : "") + "</div>";
+    }).join("") + "</div>";
+  }
+  return '<section class="lvs" id="lv-bus">' + secHead("🚏 バス（" + C.center.label + "周辺 約" + C.radius.bus + "m）", r, "bus_stops", "bus") + body +
+    '<p class="lvsrc">出典: 公共交通オープンデータセンター（odpt:BusstopPole／odpt:BusroutePattern／odpt:Bus）。' +
+    "走っているバスの位置は約2分で期限切れになります。</p></section>";
+}
+function busList(q, bus, names) {
+  var r = bus.result;
+  if (!r) return '<div class="lvbus"><span class="lvt">しらべています…</span></div>';
+  if (!r.ok) return '<div class="lvbus"><span class="lvt lvt--ng">走っているバスを取得できませんでした（' + esc(r.error || "") + "）</span></div>";
+  if (!r.data.length) return '<div class="lvbus"><span class="lvt">いま走っているバスの情報はありません（' + hhmm(r.t) + " 取得）</span></div>";
+  var rows = r.data.map(function (b) {
+    var nm = names[b.pat], here = nm && nm.order ? nm.order[q.id] : null, toI = nm && nm.order && b.to ? nm.order[b.to] : null;
+    var where = "";
+    if (here != null && toI != null) where = toI <= here ? "あと " + (here - toI + 1) + " 停留所" : "このバス停は通過ずみ";
+    return '<div class="lvbus__i"><span class="lvtag">' + esc(patternName(b.pat, names)) + "</span>" +
+      (b.no ? '<span class="lvt">車両 ' + esc(b.no) + "</span>" : "") +
+      (where ? "<b>" + where + "</b>" : "") +
+      (b.occ && OCC[b.occ] ? '<span class="lvt">' + OCC[b.occ] + "</span>" : "") +
+      (b.date ? '<i class="lvt">情報 ' + esc(String(b.date).replace(/^.*T(\d\d:\d\d).*$/, "$1")) + "</i>" : "") + "</div>";
+  });
+  return '<div class="lvbus">' + rows.join("") + '<span class="lvt">' + hhmm(r.t) + " 取得</span></div>";
+}
+function keySection() {
+  var has = L.hasKey();
+  return '<details class="lvkey"><summary>🔑 ODPT の API キー（任意）' + (has ? "　— 設定ずみ" : "") + "</summary>" +
+    "<p>公開 API（キー不要）で取れないデータがあるときだけ使います。キーは<b>この端末のブラウザにだけ</b>保存され、" +
+    "サイトのファイルや GitHub には入りません。開発者登録は <a href=\"https://developer.odpt.org/\" target=\"_blank\" rel=\"noopener\">developer.odpt.org ↗</a>。</p>" +
+    '<div class="set__add"><input id="lv-key" type="password" placeholder="acl:consumerKey の値" autocomplete="off"' + (has ? ' value="********"' : "") + ">" +
+    '<button id="lv-key-save" class="set__b" type="button">保存</button>' +
+    (has ? '<button id="lv-key-del" class="set__b2" type="button">消す</button>' : "") + "</div></details>";
+}
+var state = { rail: null, ports: null, stops: null, bus: null };
+function render() {
+  if (!panel) return;
+  var bd = panel.querySelector(".modal__bd");
+  if (!bd) return;
+  var top = bd.scrollTop;
+  bd.innerHTML = noteBox() +
+    (state.rail ? railSection(state.rail) : '<section class="lvs"><div class="lvs__h"><b>🚃 鉄道の運行情報</b><span class="lvt">しらべています…</span></div></section>') +
+    (state.ports ? cycleSection(state.ports) : '<section class="lvs"><div class="lvs__h"><b>🚲 シェアサイクル</b><span class="lvt">しらべています…</span></div></section>') +
+    (state.stops ? busSection(state.stops, state.bus) : '<section class="lvs"><div class="lvs__h"><b>🚏 バス</b><span class="lvt">しらべています…</span></div></section>') +
+    keySection() +
+    '<p class="src">' + esc(cfg().source.name) + "（" + esc(cfg().source.license) + "）。表示の時刻はこの端末の時計です。</p>";
+  bd.scrollTop = top;
+  bind(bd);
+}
+function bind(bd) {
+  $$("[data-lv-reload]", bd).forEach(function (b) {
+    b.addEventListener("click", function () {
+      var w = b.dataset.lvReload;
+      if (w === "rail") { state.rail = null; render(); L.fetchRail(true).then(function (r) { state.rail = r; render(); }); }
+      if (w === "cycle") { state.ports = null; render(); L.ports(true).then(function (r) { state.ports = r; mergePois(r.info, r.status, null); render(); }); }
+      if (w === "bus") { state.stops = null; state.bus = null; render(); L.fetchBusStops(true).then(function (r) { state.stops = r; mergePois(null, null, r); render(); }); }
+    });
+  });
+  $$("[data-lv-go]", bd).forEach(function (b) {
+    b.addEventListener("click", function () {
+      var c = b.dataset.lvGo.split(",");
+      RG.closeModal(); if (RG.Map && RG.Map.gotoLatLng) RG.Map.gotoLatLng(+c[0], +c[1], 160);
+    });
+  });
+  $$("[data-lv-bus]", bd).forEach(function (b) {
+    b.addEventListener("click", function () {
+      var q = state.stops.data.poles[+b.dataset.lvBus];
+      if (state.bus && state.bus.poleId === q.id) { state.bus = null; render(); return; }
+      state.bus = { poleId: q.id, result: null }; render();
+      L.fetchBuses(q.pats).then(function (r) { if (state.bus && state.bus.poleId === q.id) { state.bus.result = r; render(); } });
+    });
+  });
+  var ks = $("#lv-key-save", bd);
+  if (ks) ks.addEventListener("click", function () {
+    var v = ($("#lv-key", bd).value || "").trim();
+    if (!v || v === "********") return;
+    L.setKey(v); RG.tripStatus && RG.tripStatus("🔑 API キーをこの端末に保存しました。データを取り直します。", "ok", 4000);
+    state = { rail: null, ports: null, stops: null, bus: null }; load(); render();
+  });
+  var kd = $("#lv-key-del", bd);
+  if (kd) kd.addEventListener("click", function () {
+    L.setKey(""); RG.tripStatus && RG.tripStatus("API キーを消しました。", "ok", 3000);
+    state = { rail: null, ports: null, stops: null, bus: null }; load(); render();
+  });
+}
+function load() {
+  L.fetchRail().then(function (r) { state.rail = r; render(); });
+  L.ports().then(function (r) { state.ports = r; mergePois(r.info, r.status, null); render(); });
+  L.fetchBusStops().then(function (r) { state.stops = r; mergePois(null, null, r); render(); });
+}
+L.open = function () {
+  if (!cfg()) { if (RG.tripStatus) RG.tripStatus("いまの状況のデータ定義（data/odpt_lines.js）がまだ読み込まれていません。少し待ってからもう一度押してください。", "warn"); return; }
+  panel = RG.openModal("🚦 いまの状況（" + cfg().center.label + "周辺）", '<div class="lvload">しらべています…</div>');
+  render(); load();
+  // 開いている間だけ、期限が切れたものを静かに取り直す
+  clearInterval(timer);
+  timer = setInterval(function () {
+    if (!panel || !panel.classList.contains("show")) { clearInterval(timer); timer = null; return; }
+    L.fetchRail().then(function (r) { if (r.t !== (state.rail || {}).t) { state.rail = r; render(); } });
+    L.ports().then(function (r) { if (r.status.t !== ((state.ports || {}).status || {}).t) { state.ports = r; mergePois(r.info, r.status, null); render(); } });
+  }, 30000);
+};
+
+/* ヘッダのボタン */
+L.init = function () {
+  var b = $("#btn-live");
+  if (b) b.addEventListener("click", L.open);
+};
+
+})(window.RG);
+
+</script>
 <script>
 /* =========================================================================
    段階読み込み（分割配信）
@@ -6218,6 +7083,8 @@ var CORE = ["data/network.js", "data/config.js", "data/lines_meta.js",
    key    … 読み終わったあとに呼ぶ処理の名前
    label  … 進捗の表示 */
 var LAZY = [
+  { f: "data/odpt_lines.js", key: "odpt",    label: "運行情報の対応表" },
+  { f: "data/local_keys.js", key: "keys",    label: "設定" },   // git 管理外。無くてもよい
   { f: "data/landmarks.js", key: "landmarks", label: "ランドマーク" },
   { f: "data/mappois.js",   key: "pois",      label: "スポット" },
   { f: "data/heat.js",      key: "heat",      label: "区の統計" },
@@ -6287,7 +7154,15 @@ RG.startApp = function () {
     // 残りは順に。1つ読むごとに画面へ反映する
     var i = 0;
     function next() {
-      if (i >= LAZY.length) { setProgress("", 100); return; }
+      if (i >= LAZY.length) {
+        setProgress("", 100);
+        // ぜんぶ読めたら、東京駅周辺のポートとバス停を静かに取ってくる（通信できなければ何も出さない）
+        if (RG.Live && RG.Live.warm) {
+          if (window.requestIdleCallback) requestIdleCallback(function () { RG.Live.warm(); }, { timeout: 4000 });
+          else setTimeout(function () { RG.Live.warm(); }, 1200);
+        }
+        return;
+      }
       var item = LAZY[i++];
       setProgress(item.label + " をよみこんでいます", 42 + (i / LAZY.length) * 58);
       load(item.f).then(function () { refresh(item.key); })
@@ -6479,6 +7354,12 @@ RG.GENRES = [
           "クーポン施策の対象になることが多い施設です（施策の有無は各自治体で要確認）",
     src: "https://www.1010.or.jp/map/" },
 
+  /* ---- 公共交通オープンデータセンター（ODPT）。開いたときに東京駅周辺だけ取ってきます ---- */
+  { id: "sharecycle", e: "🚲", label: "シェアサイクル",   c: "#0055AD", enabled: true, live: true,
+    desc: "東京駅周辺（約1km）のポート。貸出・返却できる台数は開いたときに取ってきて、取得時刻を付けて出します（ODPT GBFS）" },
+  { id: "busstop",    e: "🚏", label: "バス停",           c: "#D2A400", enabled: true, live: true,
+    desc: "東京駅周辺（約650m）のバス停と系統。走っているバスは「🚦 いまの状況」から見られます（ODPT）" },
+
   /* ---- チェーン店（OpenStreetMap ODbL）。件数が多いので選んだときだけ出します ---- */
   { id: "cvs",     e: "🏪", label: "コンビニ",       c: "#00A040", enabled: true, optIn: true, chain: true,
     desc: "セブン-イレブン・ローソン・ファミリーマートなど。ブランドは下の一覧から選べます" },
@@ -6603,6 +7484,163 @@ RG.SCORE = {
    n=名前 la/lo=中心 z=表示するときのビュー幅（小さいほど拡大） k=種別
    出典: 特別区の代表点は Wikidata (CC0 1.0)。エリアは本アプリの手入力 */
 RG.AREAS = [{"n": "世田谷区", "la": 35.64656, "lo": 139.65322, "z": 1200, "k": "区"}, {"n": "中央区", "la": 35.6706, "lo": 139.772, "z": 1200, "k": "区"}, {"n": "中野区", "la": 35.70728, "lo": 139.66375, "z": 1200, "k": "区"}, {"n": "北区", "la": 35.75281, "lo": 139.73356, "z": 1200, "k": "区"}, {"n": "千代田区", "la": 35.69394, "lo": 139.75361, "z": 1200, "k": "区"}, {"n": "台東区", "la": 35.7125, "lo": 139.78, "z": 1200, "k": "区"}, {"n": "品川区", "la": 35.60917, "lo": 139.73017, "z": 1200, "k": "区"}, {"n": "墨田区", "la": 35.71069, "lo": 139.8015, "z": 1200, "k": "区"}, {"n": "大田区", "la": 35.56128, "lo": 139.71603, "z": 1200, "k": "区"}, {"n": "文京区", "la": 35.708, "lo": 139.75225, "z": 1200, "k": "区"}, {"n": "新宿区", "la": 35.69389, "lo": 139.70342, "z": 1200, "k": "区"}, {"n": "杉並区", "la": 35.6995, "lo": 139.63642, "z": 1200, "k": "区"}, {"n": "板橋区", "la": 35.75119, "lo": 139.70928, "z": 1200, "k": "区"}, {"n": "江戸川区", "la": 35.70664, "lo": 139.86828, "z": 1200, "k": "区"}, {"n": "江東区", "la": 35.67281, "lo": 139.81728, "z": 1200, "k": "区"}, {"n": "渋谷区", "la": 35.66367, "lo": 139.69772, "z": 1200, "k": "区"}, {"n": "港区", "la": 35.65803, "lo": 139.75153, "z": 1200, "k": "区"}, {"n": "目黒区", "la": 35.6415, "lo": 139.69828, "z": 1200, "k": "区"}, {"n": "練馬区", "la": 35.73553, "lo": 139.65169, "z": 1200, "k": "区"}, {"n": "荒川区", "la": 35.73611, "lo": 139.78339, "z": 1200, "k": "区"}, {"n": "葛飾区", "la": 35.74344, "lo": 139.84717, "z": 1200, "k": "区"}, {"n": "豊島区", "la": 35.72611, "lo": 139.71667, "z": 1200, "k": "区"}, {"n": "足立区", "la": 35.775, "lo": 139.80444, "z": 1200, "k": "区"}, {"n": "都心", "la": 35.6812, "lo": 139.7671, "z": 900, "k": "エリア"}, {"n": "副都心", "la": 35.69, "lo": 139.7, "z": 900, "k": "エリア"}, {"n": "山手", "la": 35.69, "lo": 139.71, "z": 1400, "k": "エリア"}, {"n": "下町", "la": 35.71, "lo": 139.8, "z": 1400, "k": "エリア"}, {"n": "湾岸", "la": 35.63, "lo": 139.79, "z": 1200, "k": "エリア"}, {"n": "お台場", "la": 35.63, "lo": 139.776, "z": 500, "k": "エリア"}, {"n": "臨海副都心", "la": 35.627, "lo": 139.78, "z": 700, "k": "エリア"}, {"n": "多摩川沿い", "la": 35.58, "lo": 139.67, "z": 1400, "k": "エリア"}, {"n": "東京駅周辺", "la": 35.6812, "lo": 139.7671, "z": 400, "k": "エリア"}, {"n": "新宿周辺", "la": 35.6896, "lo": 139.7006, "z": 500, "k": "エリア"}, {"n": "渋谷周辺", "la": 35.658, "lo": 139.7016, "z": 500, "k": "エリア"}, {"n": "池袋周辺", "la": 35.7295, "lo": 139.7109, "z": 500, "k": "エリア"}, {"n": "上野・浅草", "la": 35.713, "lo": 139.786, "z": 700, "k": "エリア"}, {"n": "銀座・築地", "la": 35.669, "lo": 139.766, "z": 500, "k": "エリア"}, {"n": "秋葉原・神田", "la": 35.696, "lo": 139.772, "z": 500, "k": "エリア"}, {"n": "品川・大崎", "la": 35.627, "lo": 139.736, "z": 600, "k": "エリア"}, {"n": "羽田空港", "la": 35.5494, "lo": 139.7798, "z": 700, "k": "エリア"}, {"n": "練馬", "la": 35.7355, "lo": 139.6517, "z": 900, "k": "エリア"}];
+
+/* =========================================================================
+   公共交通オープンデータセンター（ODPT）との対応表 ―― 手入力
+   ・この地図の路線名（Wikidata 由来）を ODPT の路線ID（odpt.Railway:〜）に結びつけます
+   ・対応が無い路線は「運行情報なし」と表示され、行き方の案は消しません
+   ・ロゴやマークは使いません。文字と色だけで示します
+
+   ⚠ ODPT の API キー（acl:consumerKey）は、このファイルにも他のファイルにも書かないこと。
+     キーは git 管理外の data/local_keys.js（RG.ODPT_KEY に値を入れる）か、
+     「🚦 いまの状況」パネルで端末のブラウザに保存する方法だけを使います。
+
+   出典: 公共交通オープンデータセンター https://www.odpt.org/
+         GBFS（シェアサイクル）: https://api-public.odpt.org/api/v4/gbfs/
+   ========================================================================= */
+RG.ODPT = {
+  /* 取得先。public はキー不要。keyed はキーがある端末だけ使います。
+     ACL_CONSUMERKEY はプレースホルダで、実行時に端末内のキーへ置き換えます（置き換え先はログに出しません） */
+  endpoints: {
+    "public": "https://api-public.odpt.org/api/v4/",
+    keyed:    "https://api.odpt.org/api/v4/",
+    keyParam: "acl:consumerKey=ACL_CONSUMERKEY"
+  },
+
+  /* 動的データの「新しいとみなす時間」（ミリ秒）。これを過ぎたら現在値としては出さない */
+  ttl: { rail: 3 * 60 * 1000, bus: 2 * 60 * 1000, cycleStatus: 2 * 60 * 1000,
+         cycleInfo: 24 * 60 * 60 * 1000, busStops: 24 * 60 * 60 * 1000 },
+
+  /* バス停・シェアサイクルを取る範囲（東京駅を中心に） */
+  center: { la: 35.681268, lo: 139.766756, label: "東京駅" },
+  radius: { bus: 650, cycle: 1000 },
+
+  /* 事業者（odpt.Operator:〜）の表示名 */
+  operators: {
+    "JR-East": "JR東日本", "TokyoMetro": "東京メトロ", "Toei": "東京都交通局",
+    "Tokyu": "東急電鉄", "Keio": "京王電鉄", "Odakyu": "小田急電鉄", "Seibu": "西武鉄道",
+    "Tobu": "東武鉄道", "Keisei": "京成電鉄", "Keikyu": "京急電鉄", "TWR": "東京臨海高速鉄道",
+    "Yurikamome": "ゆりかもめ", "TokyoMonorail": "東京モノレール", "MIR": "首都圏新都市鉄道",
+    "Hokuso": "北総鉄道", "SaitamaRailway": "埼玉高速鉄道", "YokohamaMunicipal": "横浜市交通局"
+  },
+
+  /* 地図の路線名 → ODPT 路線ID（"odpt.Railway:" を省いた形）。複数の系統が走る区間は配列 */
+  rail: {
+    "山手線": "JR-East.Yamanote",
+    "中央本線": ["JR-East.ChuoRapid", "JR-East.ChuoSobuLocal"],
+    "総武本線": ["JR-East.SobuRapid", "JR-East.ChuoSobuLocal"],
+    "東北本線": ["JR-East.KeihinTohokuNegishi", "JR-East.Utsunomiya", "JR-East.Takasaki"],
+    "東海道本線": ["JR-East.Tokaido", "JR-East.KeihinTohokuNegishi", "JR-East.Yokosuka"],
+    "常磐線": ["JR-East.JobanRapid", "JR-East.JobanLocal"],
+    "京葉線": "JR-East.Keiyo",
+    "武蔵野線": "JR-East.Musashino",
+    "南武線": "JR-East.Nambu",
+    "横浜線": "JR-East.Yokohama",
+    "鶴見線": "JR-East.Tsurumi",
+    "鶴見線大川支線": "JR-East.Tsurumi",
+    "鶴見線海芝浦支線": "JR-East.Tsurumi",
+    "赤羽線": "JR-East.SaikyoKawagoe",
+    "品鶴線": ["JR-East.Yokosuka", "JR-East.ShonanShinjuku"],
+    "大崎支線": "JR-East.ShonanShinjuku",
+    "東北新幹線": "JR-East.TohokuShinkansen",
+    "上越新幹線": "JR-East.JoetsuShinkansen",
+    "北陸新幹線": "JR-East.HokurikuShinkansen",
+
+    "東京メトロ銀座線": "TokyoMetro.Ginza",
+    "東京メトロ丸ノ内線": "TokyoMetro.Marunouchi",
+    "東京メトロ丸ノ内線方南町支線": "TokyoMetro.MarunouchiBranch",
+    "東京メトロ日比谷線": "TokyoMetro.Hibiya",
+    "東京メトロ東西線": "TokyoMetro.Tozai",
+    "東京メトロ千代田線": "TokyoMetro.Chiyoda",
+    "東京メトロ有楽町線": "TokyoMetro.Yurakucho",
+    "東京メトロ半蔵門線": "TokyoMetro.Hanzomon",
+    "東京メトロ南北線": "TokyoMetro.Namboku",
+    "東京メトロ副都心線": "TokyoMetro.Fukutoshin",
+
+    "都営地下鉄浅草線": "Toei.Asakusa",
+    "都営地下鉄三田線": "Toei.Mita",
+    "都営地下鉄新宿線": "Toei.Shinjuku",
+    "都営地下鉄大江戸線": "Toei.Oedo",
+    "都電荒川線": "Toei.Arakawa",
+    "日暮里・舎人ライナー": "Toei.NipporiToneri",
+
+    "東急東横線": "Tokyu.Toyoko",
+    "東急目黒線": "Tokyu.Meguro",
+    "東急田園都市線": "Tokyu.DenEnToshi",
+    "東急大井町線": "Tokyu.Oimachi",
+    "東急池上線": "Tokyu.Ikegami",
+    "東急多摩川線": "Tokyu.TokyuTamagawa",
+    "東急世田谷線": "Tokyu.Setagaya",
+    "東急新横浜線": "Tokyu.ShinYokohama",
+
+    "京王線": "Keio.Keio",
+    "京王新線": "Keio.KeioNew",
+    "京王井の頭線": "Keio.Inokashira",
+
+    "小田急小田原線": "Odakyu.Odawara",
+
+    "西武池袋線": "Seibu.Ikebukuro",
+    "西武新宿線": "Seibu.Shinjuku",
+    "西武有楽町線": "Seibu.SeibuYurakucho",
+    "西武豊島線": "Seibu.Toshima",
+
+    "東武東上本線": "Tobu.Tojo",
+    "東武伊勢崎線": ["Tobu.TobuSkytree", "Tobu.Isesaki"],
+    "東武亀戸線": "Tobu.Kameido",
+    "東武大師線": "Tobu.Daishi",
+
+    "京成本線": "Keisei.Main",
+    "京成押上線": "Keisei.Oshiage",
+    "京成金町線": "Keisei.Kanamachi",
+    "京成松戸線": "Keisei.Matsudo",
+
+    "京急本線": "Keikyu.Main",
+    "京急空港線": "Keikyu.Airport",
+    "京急大師線": "Keikyu.Daishi",
+
+    "東京臨海高速鉄道りんかい線": "TWR.Rinkai",
+    "ゆりかもめ東京臨海新交通臨海線": "Yurikamome.Yurikamome",
+    "東京モノレール羽田空港線": "TokyoMonorail.HanedaAirport",
+    "つくばエクスプレス": "MIR.TsukubaExpress",
+    "北総鉄道北総線": "Hokuso.Hokuso",
+    "埼玉高速鉄道線": "SaitamaRailway.SaitamaRailway",
+    "横浜市営地下鉄ブルーライン": "YokohamaMunicipal.Blue",
+    "横浜市営地下鉄グリーンライン": "YokohamaMunicipal.Green"
+    /* 対応なし（運行情報なしと表示）: 東海道新幹線（JR東海は ODPT 未参加）、流鉄流山線、
+       貨物線、構想路線、飛鳥山公園モノレール など */
+  },
+
+  /* 路線ID → 表示名（地図の路線名と違う呼び方になる系統だけ。無ければ地図の路線名を使う） */
+  railNames: {
+    "JR-East.ChuoRapid": "中央線快速", "JR-East.ChuoSobuLocal": "中央・総武線各駅停車",
+    "JR-East.SobuRapid": "総武線快速", "JR-East.KeihinTohokuNegishi": "京浜東北線",
+    "JR-East.Utsunomiya": "宇都宮線", "JR-East.Takasaki": "高崎線", "JR-East.Tokaido": "東海道線",
+    "JR-East.Yokosuka": "横須賀線", "JR-East.JobanRapid": "常磐線快速", "JR-East.JobanLocal": "常磐線各駅停車",
+    "JR-East.ShonanShinjuku": "湘南新宿ライン", "JR-East.SaikyoKawagoe": "埼京線",
+    "Tobu.TobuSkytree": "東武スカイツリーライン", "Tobu.Isesaki": "東武伊勢崎線（久喜以北）",
+    "TokyoMetro.MarunouchiBranch": "丸ノ内線（方南町支線）"
+  },
+
+  /* シェアサイクルの GBFS（キー不要の公開URL） */
+  gbfs: [
+    { id: "docomo-cycle-tokyo", label: "ドコモ・バイクシェア（東京）", c: "#C81432",
+      url: "https://api-public.odpt.org/api/v4/gbfs/docomo-cycle-tokyo/gbfs.json" },
+    { id: "docomo-cycle", label: "ドコモ・バイクシェア", c: "#C81432",
+      url: "https://api-public.odpt.org/api/v4/gbfs/docomo-cycle/gbfs.json" },
+    { id: "hellocycling", label: "HELLO CYCLING", c: "#D2A400",
+      url: "https://api-public.odpt.org/api/v4/gbfs/hellocycling/gbfs.json" }
+  ],
+
+  /* 画面に出す注意書き（credits.html と同じ趣旨） */
+  notice: [
+    "このデータは公共交通オープンデータセンター（ODPT）がまとめて公開しているものです。各事業者が直接このサイトに出しているものではありません。",
+    "内容が正確・完全であるとは限りません。実際の運行は駅の案内や各社の公式ページで確かめてください。",
+    "このサイトの表示について、鉄道・バス・シェアサイクルの事業者に直接問い合わせないでください。問題や質問は GitHub の Issues へお願いします。"
+  ],
+  issues: "https://github.com/tonbo7/tokyostation/issues",
+  source: { name: "公共交通オープンデータセンター", url: "https://www.odpt.org/",
+            license: "公共交通オープンデータ基本ライセンス（ODPT）／GBFS は各提供元の公開データ" }
+};
 
 /* 東京23区ランドマーク TOP100（自動生成: tools/build_landmarks.py）
 
@@ -6900,6 +7938,6 @@ RG.registerDetail("練馬", {
 });
 
 </script>
-<script>RG.boot();</script>
+<script>RG.boot(); if (RG.Live && RG.Live.warm) setTimeout(function () { RG.Live.warm(); }, 1500);</script>
 </body>
 </html>

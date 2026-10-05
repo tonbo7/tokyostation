@@ -77,7 +77,9 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
   linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/40px 100%, var(--bg);
   touch-action:none;cursor:grab}
 .mapwrap.dragging{cursor:grabbing}
-#map{width:100%;height:100%;display:block}
+#map{width:100%;height:100%;display:block;transform-origin:0 0;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#map.gesturing{will-change:transform}   /* 指が動いている間だけ合成レイヤーにする */
 .zoombar{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:6px;z-index:10}
 .zoombar button{
   width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;
@@ -365,22 +367,28 @@ body.night{--bg:#F2F3F7}
 .mapwrap{background:#F8F8FB}
 #map{ --lblscale:1 }
 .st-lbl{
-  font-size:calc(9px * var(--lblscale, 1));
+  font-size:calc(var(--fs,9) * 1px);          /* 画面ピクセル基準（--fs は地図単位に換算済み） */
   font-weight:600;fill:#1a1a1a;pointer-events:none;
-  paint-order:stroke;stroke:#F8F8FB;stroke-width:calc(2.4px * var(--lblscale,1));stroke-linejoin:round;
+  paint-order:stroke;stroke:#F8F8FB;stroke-width:calc(2.6px * var(--upp,1));stroke-linejoin:round;
 }
-.node.big .st-lbl{font-size:calc(12px * var(--lblscale,1));fill:#000}
-.st-dot{fill:#fff;stroke:#444;stroke-width:1.6;pointer-events:none}
-.node.big .st-dot{stroke-width:2.4}
+.node.big .st-lbl{font-size:calc(var(--fb,12) * 1px);fill:#000}
+.st-dot{fill:#fff;stroke:#444;stroke-width:calc(1.3px * var(--upp,1));pointer-events:none;r:calc(var(--rs,3.6) * 1px)}
+.node.big .st-dot{stroke-width:calc(1.8px * var(--upp,1));r:calc(var(--rb,6) * 1px)}
+.st-ring{fill:none;stroke:#F8F8FB;stroke-width:calc(3.4px * var(--upp,1));pointer-events:none;r:calc(var(--rs,3.6) * 1px)}
+.node.big .st-ring{stroke-width:calc(4.2px * var(--upp,1));r:calc(var(--rb,6) * 1px)}
+.st-lbl{transform:translateY(calc(-1px * (var(--rs,3.6) + 4 * var(--upp,1))))}
+.node.big .st-lbl{transform:translateY(calc(-1px * (var(--rb,6) + 5 * var(--upp,1))))}
 .node.lod .st-lbl{display:none}
+.node.off{display:none}   /* 画面の外の駅（再レイアウトを減らす） */
+.node.off .st-lbl{display:none}   /* 文字は要素そのものを消さないと再配置コストが残る */
 .node.lod.sel .st-lbl,.node.lod.hub .st-lbl,.node.lod.pick .st-lbl{display:block}
-.node.hub .st-dot{stroke:#C81432;stroke-width:3.4;fill:#FFE9ED}
-.node.sel .st-dot{stroke:#0055AD;stroke-width:4;fill:#FFC700}
+.node.hub .st-dot{stroke:#C81432;stroke-width:calc(2.6px * var(--upp,1));fill:#FFE9ED}
+.node.sel .st-dot{stroke:#0055AD;stroke-width:calc(3px * var(--upp,1));fill:#FFC700}
 .node.dim{opacity:.16}
 .node.hit .st-dot{fill:#FFC700;stroke:#0055AD}
-.node.pick .st-dot{fill:#B8F0D4;stroke:#197A4B;stroke-width:3}
+.node.pick .st-dot{fill:#B8F0D4;stroke:#197A4B;stroke-width:calc(2.4px * var(--upp,1))}
 .node.pick .st-lbl{fill:#0f5233}
-#map.isomode .node .st-dot{stroke-width:2.2}
+#map.isomode .node .st-dot{stroke-width:calc(1.8px * var(--upp,1))}
 .node.iso1 .st-dot{fill:#C0E4FF;stroke:#0055AD}
 .node.iso2 .st-dot{fill:#57B8FF;stroke:#0055AD}
 .node.iso3 .st-dot{fill:#FFC700;stroke:#A58000}
@@ -573,13 +581,13 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 #map.linemode .node{opacity:.2}
 #map.linemode .node.online{opacity:1}
 #map.linemode .node.online .st-lbl{display:block}
-#map.linemode .node.online .st-dot{stroke-width:3}
+#map.linemode .node.online .st-dot{stroke-width:calc(2.4px * var(--upp,1))}
 
 /* 注視駅 */
-.node.watch .st-dot{fill:#FFD86B;stroke:#C8880F;stroke-width:3.6}
+.node.watch .st-dot{fill:#FFD86B;stroke:#C8880F;stroke-width:calc(2.8px * var(--upp,1))}
 .node.watch .st-lbl{display:block;fill:#8A5A00;font-weight:800}
 .node.watch::after{content:""}
-.node.watch .st-hit{r:14}
+.node.watch .st-hit{r:calc(var(--sthitr,11) * 1.2px)}
 .star{border:0;background:none;font-size:17px;line-height:1;padding:0 3px;margin-left:auto;filter:grayscale(1);opacity:.5}
 .star.on{filter:none;opacity:1}
 .plate__close{margin-left:0}
@@ -759,9 +767,9 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 .poi.hide{display:none}
 .poi__c{fill:#fff;stroke:var(--pc,#888);stroke-width:calc(1.7 * var(--poiscale,1));
   r:calc(4.6px * var(--poiscale,1))}
-.poi__e{font-size:calc(5.2px * var(--poiscale,1));pointer-events:none}
+.poi__e{pointer-events:none}   /* 絵文字は画像（RG.emojiImg） */
 .poi--t0 .poi__c{stroke-width:calc(2.6 * var(--poiscale,1));r:calc(6.4px * var(--poiscale,1))}
-.poi--t0 .poi__e{font-size:calc(7.4px * var(--poiscale,1))}
+
 .poi:hover .poi__c,.poi:focus .poi__c{stroke-width:calc(3.2 * var(--poiscale,1));fill:#FFF8E1}
 #map.poipick .poi{filter:drop-shadow(0 0 2px rgba(0,0,0,.25))}
 .lm{cursor:pointer}
@@ -910,8 +918,8 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 .poihost{pointer-events:auto}
 .nodes{pointer-events:auto}
 .poi__c{opacity:.94}
-.node .st-dot{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff)}
-.node .st-lbl{paint-order:stroke;stroke:#F8F8FB;stroke-width:calc(3px * var(--lblscale,1))}
+/* v26: drop-shadow フィルタは端末によって重いのでやめ、白いリング（.st-ring）で縁取りする */
+.node .st-lbl{paint-order:stroke;stroke:#F8F8FB;stroke-width:calc(3px * var(--upp,1))}
 .poi{opacity:.9}
 .poi:hover,.poi:focus{opacity:1}
 

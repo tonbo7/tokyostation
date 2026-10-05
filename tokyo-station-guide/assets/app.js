@@ -16,7 +16,7 @@ RG.registerDetail = function (key, d) { RG.details[key] = d; };
 function $(s, r) { return (r || document).querySelector(s); }
 function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
 function el(tag, attrs, kids) {
-  var ns = /^(svg|g|path|circle|text|rect|line|use|tspan|polyline)$/.test(tag);
+  var ns = /^(svg|g|path|circle|text|rect|line|use|tspan|polyline|image)$/.test(tag);
   var n = ns ? document.createElementNS("http://www.w3.org/2000/svg", tag) : document.createElement(tag);
   for (var k in (attrs || {})) {
     if (k === "text") n.textContent = attrs[k];
@@ -32,6 +32,24 @@ function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function 
 function num(v) { return (v || 0).toLocaleString("ja-JP"); }
 function isTouch() { return !window.matchMedia("(hover:hover)").matches; }
 /* 画像はファイル名だけ持たせているので、ここで Commons の URL を組み立てる */
+/* 絵文字 → 小さな画像（data URL）。SVG の <text> は1つ1つが再配置で重いので、
+   地図のスポット（数百個）は <image> にして軽くする。描けない環境では null */
+var emojiCache = {};
+function emojiImg(e) {
+  if (emojiCache[e] !== undefined) return emojiCache[e];
+  var url = null;
+  try {
+    var c = document.createElement("canvas"), S = 64; c.width = S; c.height = S;
+    var x = c.getContext("2d");
+    x.font = "48px " + '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Noto Sans JP",sans-serif';
+    x.textAlign = "center"; x.textBaseline = "middle";
+    x.fillText(e, S / 2, S / 2 + 3);
+    url = c.toDataURL("image/png");
+  } catch (err) { url = null; }
+  emojiCache[e] = url;
+  return url;
+}
+RG.emojiImg = emojiImg;
 function cimg(f, w) {
   if (!f) return null;
   if (/^https?:/.test(f)) return f;
@@ -271,13 +289,15 @@ var Map = (function () {
       var big = s.rank < 40 || (s.ls || []).length >= 4;
       var g = el("g", { class: "node" + (big ? " big" : ""), "data-id": s.id,
                         tabindex: s.rank < 200 ? "0" : "-1", role: "button", "aria-label": s.n + "駅" });
+      // 丸の半径・線の太さ・ラベルの位置は CSS 変数（--upp など）で「画面上のピクセル」基準にする。
+      // 拡大しても丸が巨大にならず、当たり判定も指の大きさのまま
+      g.appendChild(el("circle", { class: "st-ring", cx: s.x, cy: s.y, r: big ? 6 : 3.6 }));
       g.appendChild(el("circle", { class: "st-dot", cx: s.x, cy: s.y, r: big ? 6 : 3.6 }));
-      g.appendChild(el("text", { class: "st-lbl", x: s.x, y: s.y - (big ? 9 : 6),
-                                 "text-anchor": "middle", text: s.n }));
+      g.appendChild(el("text", { class: "st-lbl", x: s.x, y: s.y, "text-anchor": "middle", text: s.n }));
       g.appendChild(el("circle", { class: "st-hit", cx: s.x, cy: s.y, r: 11 }));
       gN.appendChild(g); node[s.id] = g;
+      // クリックは地図側の「いちばん近い駅」判定（tapAt）で扱う。キーボードだけここで
       var open = function (ev) { ev.preventDefault(); Card.open(s.id, ev); };
-      g.addEventListener("click", open);
       g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") open(ev); });
       if (!isTouch()) {
         g.addEventListener("mouseenter", function (ev) { Card.hover(s.id, ev); });
@@ -287,59 +307,224 @@ var Map = (function () {
     if (node[RG.HUB]) node[RG.HUB].classList.add("hub");
   }
 
+  /* CSS 変数は値が変わったときだけ書く（同じ値でも書くと再計算が走る端末がある） */
+  var cssVars = {};
+  function setVar(k, v) { if (cssVars[k] === v) return; cssVars[k] = v; svg.style.setProperty(k, v); }
+  var lastBucket = null, wrapW = 0;
   function lod() {
     var z = VB.w / vb.w;
     var k = Math.round(Math.min(800, Math.max(22, 22 * z * z)));
-    RG.NET.stations.forEach(function (s) { node[s.id].classList.toggle("lod", s.rank >= k); });
-    svg.style.setProperty("--lblscale", (1 / Math.pow(z, 0.55)).toFixed(3));
-    // 画面上で常に同じ大きさの当たり判定になるよう、地図座標へ換算する
-    var upp = vb.w / Math.max(320, wrap.getBoundingClientRect().width);
-    svg.style.setProperty("--hitr", (12 * upp).toFixed(2));
-    svg.style.setProperty("--sthitr", (15 * upp).toFixed(2));
+    var r = wrap.getBoundingClientRect(), w = Math.max(320, r.width), hpx = Math.max(240, r.height);
+    // 画面の外にある駅はまるごと非表示にする（SVG の文字は再配置が重いので、画面内だけにする）
+    var pad = vb.w * 0.12, x0 = vb.x - pad, x1 = vb.x + vb.w + pad, y0 = vb.y - pad, y1 = vb.y + vb.h + pad;
+    var cull = z >= 2.2;                                            // 全体表示のときは全部出す（ラベルは少ない）
+    // ラベルは「画面内」「順位が上位」「重ならない」ものだけ、画面の広さに応じた上限まで
+    var LMAX = Math.max(36, Math.min(120, Math.round(w * hpx / 7000)));
+    var cell = 54 * (vb.w / w), used = {}, cand = [];                // ラベル同士が重ならない目安（画面54px）
+    RG.NET.stations.forEach(function (s) {
+      var n = node[s.id];
+      var off = cull && (s.x < x0 || s.x > x1 || s.y < y0 || s.y > y1);
+      n.classList.toggle("off", off);
+      if (!off && s.rank < k) cand.push(s); else n.classList.add("lod");
+    });
+    cand.sort(function (a, b) { return a.rank - b.rank; });
+    var shown = 0;
+    cand.forEach(function (s) {
+      var key = Math.round(s.x / cell) + "," + Math.round(s.y / cell), n = node[s.id];
+      var ok = shown < LMAX && !used[key];
+      if (ok) { used[key] = 1; shown++; }
+      n.classList.toggle("lod", !ok);
+    });
+    // 丸・文字・当たり判定の大きさは「画面上のピクセル」基準。ただし変数を書き換えると駅ぜんぶの
+    // 再計算になるので、ズームの段階（半オクターブ）が変わったときだけ書く
+    var bucket = Math.round(Math.log(z) / Math.LN2 * 2) + ":" + Math.round(w / 40);
+    if (bucket !== lastBucket) {
+      lastBucket = bucket;
+      var zq = Math.pow(2, Math.round(Math.log(z) / Math.LN2 * 2) / 2);   // 段階の代表ズーム
+      var upp = (VB.w / zq) / w;                                     // 1px が何単位か
+      var t = Math.min(1, Math.max(0, Math.log(zq) / Math.log(22)));
+      setVar("--lblscale", (1 / Math.pow(zq, 0.62)).toFixed(3));
+      // ラベルの文字も画面ピクセル基準：小さい駅 10→12px／大きい駅 12.5→15px
+      setVar("--fs", ((10 + 2 * t) * upp).toFixed(3));
+      setVar("--fb", ((12.5 + 2.5 * t) * upp).toFixed(3));
+      setVar("--hitr", (12 * upp).toFixed(2));
+      setVar("--sthitr", (16 * upp).toFixed(2));
+      setVar("--upp", upp.toFixed(4));
+      setVar("--rs", ((3 + 3 * t) * upp).toFixed(3));              // 小さい駅 3→6px
+      setVar("--rb", ((5.5 + 4.5 * t) * upp).toFixed(3));          // 大きい駅 5.5→10px
+    }
     var lv = $("#zlevel"); if (lv) lv.textContent = z < 1.6 ? "全体" : z < 5 ? "広域" : z < 14 ? "地区" : "詳細";
     poiLOD();
     if (RG.Walk && RG.Walk.lod) RG.Walk.lod(z);
   }
   function scheduleLod() { clearTimeout(lodTimer); lodTimer = setTimeout(lod, 90); }
 
+  /* ===== 操作（パン・ピンチ・タップ）=====
+     ・iOS / Android / PC で同じ動きになるよう、ポインタイベントだけで扱う（タッチイベントは使わない）
+     ・指が動いている間は SVG 全体を transform で動かすだけ（再描画しない）。
+       指を離したときに1回だけ viewBox を確定する → 669駅＋ポリゴンの再描画が1回で済む
+     ・タップは「指の位置にいちばん近い駅」を選ぶ。重なった当たり判定の順番に左右されない
+     ・駅の上から指を動かしてもパンになる（押した場所で動きが変わらない） */
+  var ptrs = {}, gest = null, raf = 0, lastTap = null, movedAt = 0, swallowUntil = 0;
+  /* pointerup で駅カードを開いた直後、ブラウザが合成する click が開いたばかりのシート（scrim）に当たって
+     閉じてしまうのを防ぐ。開いた直後の 1 回だけ click を飲み込む */
+  document.addEventListener("click", function (e) {
+    if (swallowUntil && Date.now() < swallowUntil) { swallowUntil = 0; e.stopPropagation(); e.preventDefault(); }
+  }, true);
+  /* 指を動かした直後の click は「ドラッグの終わり」なので、スポットなどは開かない */
+  function justMoved() { return Date.now() - movedAt < 400; }
+  function ptrList() { return Object.keys(ptrs).map(function (k) { return ptrs[k]; }); }
+  function clampVB(v) {
+    var mx2 = VB.w * 0.25, my2 = VB.h * 0.25;
+    v.w = clamp(v.w, 90, VB.w * 1.6); v.h = v.w * (v.ar || (vb.h / vb.w));
+    v.x = Math.max(-mx2, Math.min(VB.w - v.w + mx2, v.x));
+    v.y = Math.max(-my2, Math.min(VB.h - v.h + my2, v.y));
+    return v;
+  }
+  /* 確定している vb0 から、目標 v への見た目の差を transform で表す（描画はしない） */
+  function preview(v) {
+    var g = gest; if (!g) return;
+    var s0 = g.r.width / g.vb.w, s = g.r.width / v.w;
+    svg.style.transform = "translate(" + ((g.vb.x - v.x) * s).toFixed(2) + "px," + ((g.vb.y - v.y) * s).toFixed(2) +
+                          "px) scale(" + (s / s0).toFixed(5) + ")";
+    g.target = v;
+  }
+  function schedulePreview(v) {
+    if (!gest) return;
+    gest.pending = v;
+    if (raf) return;
+    raf = requestAnimationFrame(function () { raf = 0; if (gest && gest.pending) preview(gest.pending); });
+  }
+  function startGesture() {
+    var list = ptrList();
+    gest = { r: wrap.getBoundingClientRect(), vb: { x: vb.x, y: vb.y, w: vb.w, h: vb.h }, target: null, pending: null,
+             moved: gest ? gest.moved : false, t0: gest ? gest.t0 : Date.now(), multi: gest ? gest.multi : false };
+    gest.vb.ar = gest.vb.h / gest.vb.w;
+    if (list.length >= 2) {
+      gest.multi = true;
+      gest.d0 = Math.hypot(list[0].x - list[1].x, list[0].y - list[1].y) || 1;
+      gest.c0 = { x: (list[0].x + list[1].x) / 2, y: (list[0].y + list[1].y) / 2 };
+    } else if (list.length === 1) {
+      gest.p0 = { x: list[0].x, y: list[0].y };
+    }
+    svg.classList.add("gesturing");
+  }
+  function moveGesture() {
+    var g = gest, list = ptrList(); if (!g) return;
+    var k = g.vb.w / g.r.width;                                   // 1px が何単位か
+    if (list.length >= 2 && g.d0) {
+      var d = Math.hypot(list[0].x - list[1].x, list[0].y - list[1].y) || 1;
+      var c = { x: (list[0].x + list[1].x) / 2, y: (list[0].y + list[1].y) / 2 };
+      var sc = g.d0 / d;                                            // 指を広げる → 1 より小さい → 拡大
+      var nw = clamp(g.vb.w * sc, 90, VB.w * 1.6), ratio = nw / g.vb.w;
+      // 最初に指の中心にあった点が、いまの指の中心に来るように
+      var ux = g.vb.x + (g.c0.x - g.r.left) * k, uy = g.vb.y + (g.c0.y - g.r.top) * k;
+      var v = { w: nw, ar: g.vb.ar };
+      v.x = ux - (c.x - g.r.left) * k * ratio; v.y = uy - (c.y - g.r.top) * k * ratio;
+      g.moved = true;
+      schedulePreview(clampVB(v));
+    } else if (list.length === 1 && g.p0) {
+      var dx = list[0].x - g.p0.x, dy = list[0].y - g.p0.y;
+      if (!g.moved && Math.hypot(dx, dy) > 7) g.moved = true;      // 7px までは「タップ」
+      if (!g.moved) return;
+      schedulePreview(clampVB({ x: g.vb.x - dx * k, y: g.vb.y - dy * k, w: g.vb.w, ar: g.vb.ar }));
+    }
+  }
+  function endGesture() {
+    var g = gest; if (!g) return;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    if (g.pending) preview(g.pending);
+    svg.style.transform = "";
+    svg.classList.remove("gesturing");
+    if (g.target) { vb.x = g.target.x; vb.y = g.target.y; vb.w = g.target.w; vb.h = g.target.h; }
+    if (g.moved) movedAt = Date.now();
+    gest = null;
+    apply(); clearTimeout(lodTimer); lod();                         // 確定は1回だけ
+  }
+  /* 指の位置にいちばん近い駅を選ぶ。ラベルが出ている駅を優先し、小さな駅は近くを正確に押したときだけ */
+  function tapAt(cx, cy, ev) {
+    var u = toMap(cx, cy), sx = u.s || 1, best = null, bestD = 1e9;
+    var ux = u.x, uy = u.y;
+    var R1 = 24 / sx, R2 = 14 / sx;                                 // 画面上 24px / 14px
+    // まずラベルが出ている（見えている）駅だけで探す。無ければ、小さな駅を 14px 以内で探す
+    var small = [];
+    RG.NET.stations.forEach(function (s) {
+      var d = Math.hypot(s.x - ux, s.y - uy);
+      var n = node[s.id], shown = n && !n.classList.contains("lod");
+      if (shown) { if (d <= R1 && d < bestD) { bestD = d; best = s; } }
+      else if (d <= R2) small.push({ s: s, d: d });
+    });
+    if (!best && small.length) { small.sort(function (a, b) { return a.d - b.d; }); best = small[0].s; }
+    if (best) { lastTap = null; swallowUntil = Date.now() + 500; Card.open(best.id, ev); return true; }
+    return false;
+  }
   function initViewport() {
     wrap = $(".mapwrap"); vb = { x: VB.x, y: VB.y, w: VB.w, h: VB.h };
     apply(); lod();
-    var drag = null, pinch = null;
+    function onMap(e) { return e.target === svg || (e.target.closest && e.target.closest("#map")); }
     wrap.addEventListener("pointerdown", function (e) {
-      if (e.target.closest(".node")) return;
-      wrap.setPointerCapture(e.pointerId);
-      drag = { x: e.clientX, y: e.clientY, vx: vb.x, vy: vb.y };
+      if (!onMap(e) || (e.pointerType === "mouse" && e.button !== 0)) return;
+      try { wrap.setPointerCapture(e.pointerId); } catch (x) {}
+      ptrs[e.pointerId] = { x: e.clientX, y: e.clientY, type: e.pointerType };
+      if (Object.keys(ptrs).length > 2) { delete ptrs[e.pointerId]; return; }
+      startGesture();
       wrap.classList.add("dragging");
+      if (e.pointerType !== "mouse") e.preventDefault();
     });
     wrap.addEventListener("pointermove", function (e) {
-      if (!drag || pinch) return;
-      var r = wrap.getBoundingClientRect(), k = vb.w / r.width;
-      vb.x = drag.vx - (e.clientX - drag.x) * k;
-      vb.y = drag.vy - (e.clientY - drag.y) * k; apply();
+      var p = ptrs[e.pointerId]; if (!p) return;
+      p.x = e.clientX; p.y = e.clientY;
+      moveGesture();
     });
-    ["pointerup", "pointercancel", "pointerleave"].forEach(function (t) {
-      wrap.addEventListener(t, function () { drag = null; wrap.classList.remove("dragging"); });
-    });
+    function up(e) {
+      var p = ptrs[e.pointerId]; if (!p) return;
+      delete ptrs[e.pointerId];
+      var g = gest, left = Object.keys(ptrs).length;
+      if (left === 0) {
+        var wasTap = g && !g.moved && !g.multi && e.type === "pointerup" && Date.now() - g.t0 < 600;
+        endGesture();
+        wrap.classList.remove("dragging");
+        // スポット・ランドマーク・現在地の上のタップは、それぞれの click に任せる
+        if (wasTap && e.target && e.target.closest && e.target.closest(".poi, .lm, .me")) wasTap = false;
+        if (wasTap) {
+          // 駅が無いところを素早く2回たたいたら、そこを拡大（駅のタップは1回で即開く）
+          var hit = tapAt(e.clientX, e.clientY, e);
+          if (!hit) {
+            var now = Date.now();
+            if (lastTap && now - lastTap.t < 320 && Math.hypot(lastTap.x - e.clientX, lastTap.y - e.clientY) < 28) {
+              lastTap = null; zoomAt(e.clientX, e.clientY, 1 / 1.7);
+            } else lastTap = { t: now, x: e.clientX, y: e.clientY };
+          }
+        }
+      } else {
+        // 2本→1本になったら、残った指からパンを続ける
+        if (g) { if (g.pending) preview(g.pending); if (g.target) { vb.x = g.target.x; vb.y = g.target.y; vb.w = g.target.w; vb.h = g.target.h; } }
+        svg.style.transform = ""; svg.setAttribute("viewBox", [vb.x, vb.y, vb.w, vb.h].join(" "));
+        gest = null; startGesture(); gest.moved = true; gest.multi = true;
+      }
+    }
+    wrap.addEventListener("pointerup", up);
+    wrap.addEventListener("pointercancel", up);
+    wrap.addEventListener("lostpointercapture", function (e) { if (ptrs[e.pointerId]) up({ pointerId: e.pointerId, type: "pointercancel", clientX: 0, clientY: 0 }); });
+    // ホイール：連続イベントを 1 フレームにまとめる
+    var wheelAcc = 0, wheelPt = null, wheelRaf = 0;
     wrap.addEventListener("wheel", function (e) {
-      e.preventDefault(); zoomAt(e.clientX, e.clientY, e.deltaY > 0 ? 1.16 : 1 / 1.16);
-    }, { passive: false });
-    wrap.addEventListener("touchstart", function (e) {
-      if (e.touches.length === 2) { drag = null;
-        pinch = { d: dist(e.touches), vb: { x: vb.x, y: vb.y, w: vb.w, h: vb.h }, c: mid(e.touches) }; }
-    }, { passive: true });
-    wrap.addEventListener("touchmove", function (e) {
-      if (!pinch || e.touches.length !== 2) return;
+      if (!onMap(e)) return;
       e.preventDefault();
-      var k = pinch.d / dist(e.touches), r = wrap.getBoundingClientRect();
-      var ar = pinch.vb.h / pinch.vb.w;
-      var nw = clamp(pinch.vb.w * k, 90, VB.w * 1.6), nh = nw * ar;
-      var fx = (pinch.c.x - r.left) / r.width, fy = (pinch.c.y - r.top) / r.height;
-      vb.x = pinch.vb.x + (pinch.vb.w - nw) * fx;
-      vb.y = pinch.vb.y + (pinch.vb.h - nh) * fy;
-      vb.w = nw; vb.h = nh; apply();
+      wheelAcc += e.deltaY; wheelPt = { x: e.clientX, y: e.clientY };
+      if (wheelRaf) return;
+      wheelRaf = requestAnimationFrame(function () {
+        wheelRaf = 0; var f = Math.pow(1.16, Math.max(-3, Math.min(3, wheelAcc / 50))); wheelAcc = 0;
+        if (f !== 1) zoomAt(wheelPt.x, wheelPt.y, f);
+      });
     }, { passive: false });
-    wrap.addEventListener("touchend", function (e) { if (e.touches.length < 2) pinch = null; }, { passive: true });
+    // iOS Safari 向け：ブラウザ自身のピンチ拡大・長押しメニューを地図の上では止める
+    ["gesturestart", "gesturechange", "gestureend"].forEach(function (t) {
+      wrap.addEventListener(t, function (e) { if (onMap(e)) e.preventDefault(); }, { passive: false });
+    });
+    wrap.addEventListener("touchmove", function (e) { if (onMap(e)) e.preventDefault(); }, { passive: false });
+    wrap.addEventListener("contextmenu", function (e) { if (onMap(e)) e.preventDefault(); });
+    wrap.addEventListener("dblclick", function (e) { if (onMap(e)) e.preventDefault(); });
     window.addEventListener("resize", scheduleLod);
   }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
@@ -359,7 +544,12 @@ var Map = (function () {
     vb.x += (vb.w - nw) * fx; vb.y += (vb.h - nh) * fy; vb.w = nw; vb.h = nh; apply();
   }
   function zoom(k) { var r = wrap.getBoundingClientRect(); zoomAt(r.left + r.width / 2, r.top + r.height / 2, k); }
-  function fitAll() { vb = { x: VB.x, y: VB.y, w: VB.w, h: VB.h }; apply(); }
+  function fitAll() {
+    var r = wrap ? wrap.getBoundingClientRect() : null, ar = r && r.width ? r.height / r.width : VB.h / VB.w;
+    var w = Math.max(VB.w, VB.h / ar), h = w * ar;              // 全体が収まる幅で、画面と同じ縦横比に
+    vb = { x: VB.x + (VB.w - w) / 2, y: VB.y + (VB.h - h) / 2, w: w, h: h };
+    apply();
+  }
   function focus(id, w) {
     var s = RG.byId[id]; if (!s) return;
     var r = wrap.getBoundingClientRect();
@@ -367,14 +557,22 @@ var Map = (function () {
     vb.x = s.x - vb.w / 2; vb.y = s.y - vb.h / 2 - (isTouch() ? vb.h * 0.16 : 0);
     apply();
   }
+  /* 地図座標 → 画面座標。SVG の実際の変換行列を使うので、余白が付く表示や transform 中でもずれない */
   function screenPosXY(x, y) {
-    var r = wrap.getBoundingClientRect();
-    return { x: r.left + (x - vb.x) / vb.w * r.width, y: r.top + (y - vb.y) / vb.h * r.height };
+    var m = svg.getScreenCTM();
+    if (!m) { var r = wrap.getBoundingClientRect(); return { x: r.left + (x - vb.x) / vb.w * r.width, y: r.top + (y - vb.y) / vb.h * r.height }; }
+    return { x: m.a * x + m.c * y + m.e, y: m.b * x + m.d * y + m.f };
   }
   function screenPos(id) {
     var s = RG.byId[id]; if (!s) return null;
-    var r = wrap.getBoundingClientRect();
-    return { x: r.left + (s.x - vb.x) / vb.w * r.width, y: r.top + (s.y - vb.y) / vb.h * r.height };
+    return screenPosXY(s.x, s.y);
+  }
+  /* 画面座標 → 地図座標 */
+  function toMap(cx, cy) {
+    var m = svg.getScreenCTM();
+    if (!m) { var r = wrap.getBoundingClientRect(); return { x: vb.x + (cx - r.left) / r.width * vb.w, y: vb.y + (cy - r.top) / r.height * vb.h, s: r.width / vb.w }; }
+    var inv = m.inverse();
+    return { x: inv.a * cx + inv.c * cy + inv.e, y: inv.b * cx + inv.d * cy + inv.f, s: m.a };
   }
   function select(id) {
     if (selected && node[selected]) node[selected].classList.remove("sel");
@@ -464,9 +662,9 @@ var Map = (function () {
   function makeNode() {
     var n = el("g", { class: "poi", tabindex: "-1", role: "button" });
     n.appendChild(el("circle", { class: "poi__c", r: 5 }));
-    n.appendChild(el("text", { class: "poi__e", "text-anchor": "middle" }));
+    n.appendChild(el("image", { class: "poi__e", width: 8, height: 8, preserveAspectRatio: "xMidYMid meet" }));
     n.appendChild(el("circle", { class: "poi__hit", r: 10 }));
-    n.addEventListener("click", function (ev) { ev.stopPropagation(); if (n.__p) RG.showSpot(n.__p); });
+    n.addEventListener("click", function (ev) { ev.stopPropagation(); if (n.__p && !justMoved()) RG.showSpot(n.__p); });
     n.addEventListener("mouseenter", function () { if (n.__p) RG.spotTip(n.__p, { x: n.__p.x, y: n.__p.y }); });
     n.addEventListener("mouseleave", function () { RG.spotTip(null); });
     n.addEventListener("keydown", function (ev) { if (ev.key === "Enter" && n.__p) RG.showSpot(n.__p); });
@@ -536,10 +734,16 @@ var Map = (function () {
       n.setAttribute("tabindex", t.ti === 0 ? "0" : "-1");
       var c0 = n.childNodes[0], e0 = n.childNodes[1], h0 = n.childNodes[2];
       c0.setAttribute("cx", t.x); c0.setAttribute("cy", t.y); c0.setAttribute("style", "--pc:" + g.c);
-      e0.setAttribute("x", t.x); e0.setAttribute("y", t.y + 2.4); e0.textContent = g.e;
+      // 絵文字は画像で。大きさは丸に合わせる（t0 は大きめ）
+      var iw = (t.ti === 0 ? 9.6 : 6.8) * eff, href = emojiImg(g.e);
+      if (href) {
+        if (e0.__e !== g.e) { e0.setAttribute("href", href); e0.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", href); e0.__e = g.e; }
+        e0.setAttribute("x", t.x - iw / 2); e0.setAttribute("y", t.y - iw / 2);
+        e0.setAttribute("width", iw); e0.setAttribute("height", iw);
+      }
       h0.setAttribute("cx", t.x); h0.setAttribute("cy", t.y);
     }
-    svg.style.setProperty("--poiscale", eff);
+    setVar("--poiscale", String(+eff.toFixed(3)));
     svg.classList.toggle("poipick", !!picked);
     var cnt = $("#poicount");
     if (cnt) cnt.textContent = show.length + " / " + list.length;
@@ -558,7 +762,7 @@ var Map = (function () {
       g.appendChild(el("circle", { class: "lm__c", cx: P.x, cy: P.y, r: 7 }));
       g.appendChild(el("text", { class: "lm__e", x: P.x, y: P.y + 3.2, "text-anchor": "middle", text: L.e }));
       g.appendChild(el("circle", { class: "lm__hit", cx: P.x, cy: P.y, r: 12 }));
-      var open = function (ev) { ev && ev.stopPropagation(); RG.showLandmark(L); };
+      var open = function (ev) { ev && ev.stopPropagation(); if (ev && ev.type === "click" && justMoved()) return; RG.showLandmark(L); };
       g.addEventListener("click", open);
       g.addEventListener("mouseenter", function () { RG.spotTip(L, project(L.la, L.lo), true); });
       g.addEventListener("mouseleave", function () { RG.spotTip(null); });

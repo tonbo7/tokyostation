@@ -5,3 +5,5 @@ package.json
 .DS_Store
 # ODPT の API キー（この端末だけ。絶対にコミットしない）
 data/local_keys.js
+# 歩行空間ネットワークデータの生データ（配布元から各自取得）
+data/indoor/raw/

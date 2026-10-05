@@ -32,7 +32,7 @@ html = html.replace(/<script src="([^"]+)"><\/script>/g, function (m, p) {
 /* 段階読み込み用のデータも、単一ファイル版では直接埋め込む（local_keys は入れない） */
 var DATA = ["network", "config", "lines_meta", "genres", "score", "areas", "odpt_lines",
             "landmarks", "mappois", "heat", "admin", "relief", "poi", "descs",
-            "tokyo_od2", "tokyo_od", "flood", "events", "chains", "user_pois"];
+            "tokyo_od2", "tokyo_od", "flood", "events", "chains", "user_pois", "indoor"];
 var blob = DATA.filter(function (d) { return exists("data/" + d + ".js"); })
                .map(function (d) { return read("data/" + d + ".js"); }).join("\n");
 var START = "<script>RG.startApp();</script>";

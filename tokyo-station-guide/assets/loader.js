@@ -29,7 +29,8 @@ var LAZY = [
   { f: "data/flood.js",     key: "flood",     label: "浸水想定" },
   { f: "data/events.js",    key: "events",    label: "イベント" },
   { f: "data/chains.js",    key: "chains",    label: "チェーン店" },
-  { f: "data/user_pois.js", key: "user",      label: "自分のスポット" }
+  { f: "data/user_pois.js", key: "user",      label: "自分のスポット" },
+  { f: "data/indoor.js",    key: "indoor",    label: "歩行空間・構内" }   // 無ければ何も出ない（data/indoor/README.md）
 ];
 
 var loaded = {};
@@ -71,6 +72,7 @@ function refresh(key) {
     if (key === "poi" || key === "descs") {
       if (RG.Card && RG.Card.refresh) RG.Card.refresh();
     }
+    if (key === "indoor" && RG.Walk && RG.Walk.apply) RG.Walk.apply();
   } catch (e) {
     if (window.console) console.warn("追加データの反映でつまずきました:", key, e);
   }

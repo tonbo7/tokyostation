@@ -51,6 +51,11 @@ RG.GENRES = [
   { id: "busstop",    e: "🚏", label: "バス停",           c: "#D2A400", enabled: true, live: true,
     desc: "東京駅周辺（約650m）のバス停と系統。走っているバスは「🚦 いまの状況」から見られます（ODPT）" },
 
+  /* ---- 歩行空間ネットワークデータ（ほこナビ・国土交通省仕様）。data/indoor.js があるときだけ有効になります ---- */
+  { id: "indoor",     e: "🛗", label: "構内・歩行空間",   c: "#5A6472", enabled: false,
+    desc: "東京駅周辺のエレベーター・階段・トイレなど。拡大すると歩ける道が歩きやすさの色（緑＝段差なし／黄＝注意／赤＝階段／青＝エレベーター等）で出ます",
+    reason: "データ未取得。data/indoor/README.md の手順で歩行空間ネットワークデータを置き、tools/build_indoor.py を実行すると出ます" },
+
   /* ---- チェーン店（OpenStreetMap ODbL）。件数が多いので選んだときだけ出します ---- */
   { id: "cvs",     e: "🏪", label: "コンビニ",       c: "#00A040", enabled: true, optIn: true, chain: true,
     desc: "セブン-イレブン・ローソン・ファミリーマートなど。ブランドは下の一覧から選べます" },

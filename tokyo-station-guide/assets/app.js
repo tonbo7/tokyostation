@@ -298,6 +298,7 @@ var Map = (function () {
     svg.style.setProperty("--sthitr", (15 * upp).toFixed(2));
     var lv = $("#zlevel"); if (lv) lv.textContent = z < 1.6 ? "全体" : z < 5 ? "広域" : z < 14 ? "地区" : "詳細";
     poiLOD();
+    if (RG.Walk && RG.Walk.lod) RG.Walk.lod(z);
   }
   function scheduleLod() { clearTimeout(lodTimer); lodTimer = setTimeout(lod, 90); }
 
@@ -969,6 +970,7 @@ var Card = (function () {
            boarding(s, d) +
            town(s, d) +
            summary(s) +
+           '<div class="sec walk" data-walk-st="' + esc(s.id) + '" hidden></div>' +
            heritageBlock(s) +
            videoBlock(s, d) +
            linksBlock(s) +
@@ -1043,6 +1045,7 @@ var Card = (function () {
     var t2 = root.querySelector("[data-to]");
     if (t2) t2.addEventListener("click", function (e) { e.stopPropagation(); RG.showRoutes(t2.dataset.to); });
     if (RG.Live && RG.Live.decorateStation) RG.Live.decorateStation(root, id);
+    if (RG.Walk && RG.Walk.decorateStation) RG.Walk.decorateStation(root, id);
     $$(".tab", root).forEach(function (b) {
       b.addEventListener("click", function () {
         tab = b.dataset.tab;

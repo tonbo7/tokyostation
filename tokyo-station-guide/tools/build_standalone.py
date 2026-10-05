@@ -24,7 +24,7 @@ html = re.sub(r'<script src="([^"]+)"></script>', sub_script, html)
 # ⚠ data/local_keys.js（ODPT の API キー・git 管理外）は絶対に同梱しない
 DATA = ["network", "config", "lines_meta", "genres", "score", "areas", "odpt_lines",
         "landmarks", "mappois", "heat", "admin", "relief", "poi", "descs",
-        "tokyo_od2", "tokyo_od", "flood", "events", "chains", "user_pois"]
+        "tokyo_od2", "tokyo_od", "flood", "events", "chains", "user_pois", "indoor"]
 blob = "\n".join(read("data/%s.js" % d) for d in DATA if os.path.exists("data/%s.js" % d))
 html = html.replace("<script>RG.startApp();</script>",
                     "<script>\n" + blob + "\n</script>\n<script>RG.startApp();</script>")

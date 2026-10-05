@@ -1445,3 +1445,15 @@ body.secret .lbadge{min-width:25px;height:25px;font-size:11.5px;background:var(-
 .poi--busstop .poi__c{stroke:#D2A400}
 body.night .live{background:#2C3550;color:#EAF0FF}
 body.night .lvh,body.night .live .lvt{color:#C7D0E6}
+
+/* ---------- 🚶 歩行空間・構内（ほこナビ） ---------- */
+.walk{pointer-events:none}
+.walk__h{stroke:#fff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.walk__p{stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.walk__p--ok{stroke:#197A4B}
+.walk__p--care{stroke:#D2A400;stroke-width:1.8}
+.walk__p--stairs{stroke:#FE3939;stroke-width:1.8}
+.walk__p--lift{stroke:#0079C2;stroke-width:2;stroke-dasharray:2 1.2}
+#map.blank .walk{display:none}
+.sec.walk[hidden]{display:none}
+.poi--indoor .poi__c{stroke:#5A6472}

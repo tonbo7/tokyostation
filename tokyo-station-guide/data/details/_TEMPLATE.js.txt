@@ -18,6 +18,14 @@ RG.registerDetail("富士見台", {
  boarding: [
   { car: 3, type: "stair", pos: "中", label: "改札へいちばん近い階段" }
  ],
+ /* 乗り場（番線）。案内中の「移動の詳細」に出ます。line は路線名の一部でよい。無ければ「未調査」と出ます */
+ tracks: [
+  { line: "西武池袋線", dir: "池袋方面", no: "1", note: "" }
+ ],
+ /* 出口。recommended:true を付けたものが「おすすめの出口」。for には何に近いかを書く */
+ exits: [
+  { name: "北口", for: ["バス", "商店街"], recommended: true, note: "改札を出て左" }
+ ],
  congestion: { "平日 7-9時": 3, "平日 10-16時": 1, "平日 17-20時": 3, "休日 昼": 2 },
  congestionSource: "2026-08-15 7:45 上り列車を自分で数えた",
  town: {

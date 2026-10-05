@@ -493,6 +493,7 @@ function openSettings() {
       "ダウンロードして配布する機能も付けていません<br>" +
       "詳しい理由は README の「11.1」を読んでください</div></div>" +
 
+    (RG.Alerts && RG.Alerts.settingsHtml ? RG.Alerts.settingsHtml() : "") +
     '<div class="set__sec"><h4>📄 出典とライセンス</h4>' +
       '<p class="set__d">使っているデータの出どころと注意書きをまとめています。' +
       '運行情報・バス・シェアサイクル（🚦）は公共交通オープンデータセンターのデータで、取得時刻を付けて表示します。</p>' +
@@ -500,6 +501,7 @@ function openSettings() {
       '<a class="lnk" href="https://github.com/tonbo7/tokyostation/issues" target="_blank" rel="noopener"><span>🐙</span>問題を知らせる（GitHub Issues）</a></div></div>';
   var m = RG.openModal("設定", html);
   renderWatch();
+  if (RG.Alerts && RG.Alerts.bindSettings) RG.Alerts.bindSettings(m);
 
   $("#set-lm", m).addEventListener("change", function () { ST.lmOn = this.checked; save(); applyLandmarks(); });
   $("#set-own", m).addEventListener("change", function () { ST.lmOwn = this.checked; save(); applyLandmarks(); });

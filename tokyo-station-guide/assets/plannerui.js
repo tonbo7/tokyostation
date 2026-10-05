@@ -675,7 +675,7 @@ function showRoutes(destId) {
     b.addEventListener("click", function () {
       RG.Nav.destId = s.id;
       RG.closeModal();
-      RG.startNav([s.la, s.lo], s.n + "駅", r.options[+b.dataset.nav]);
+      RG.startNav([s.la, s.lo], s.n + "駅", r.options[+b.dataset.nav], { result: r, destId: s.id, destName: s.n + "駅" });
     });
   });
   $$("[data-sort]", m).forEach(function (b) {

@@ -114,15 +114,17 @@ function railField(from, date) {
       }
     });
   }
+  /* 乗車駅からこの駅までに通った駅の並び（{id, line}）。line は「その駅に着くときに乗っていた路線」 */
+  function stopsTo(id) {
+    var acc = [], cur = id, guard = 0;
+    while (cur && info[cur] && guard++ < 400) { acc.push({ id: cur, line: info[cur].line || null }); cur = info[cur].prev; }
+    return acc.reverse();
+  }
   /* 乗車駅からこの駅まで、どの路線に乗ったか（乗った順・重複なし）。運行情報を重ねるために使う */
   function linesTo(id) {
-    var seen = {}, acc = [], cur = id, guard = 0;
-    while (cur && info[cur] && guard++ < 400) {
-      var L = info[cur].line;
-      if (L && !seen[L]) { seen[L] = 1; acc.push(L); }
-      cur = info[cur].prev;
-    }
-    return acc.reverse();
+    var seen = {}, acc = [];
+    stopsTo(id).forEach(function (s) { if (s.line && !seen[s.line]) { seen[s.line] = 1; acc.push(s.line); } });
+    return acc;
   }
   var out = {};
   Object.keys(dist).forEach(function (id) {
@@ -132,7 +134,7 @@ function railField(from, date) {
       yen += v; note.push(f.operator + " " + i.km[fk].toFixed(1) + "km → " + v + "円");
     });
     out[id] = { min: dist[id], yen: yen, transfers: i.transfers, board: i.board,
-                accessMin: i.access, fareNote: note, prev: i.prev, lines: linesTo(id) };
+                accessMin: i.access, fareNote: note, prev: i.prev, lines: linesTo(id), stops: stopsTo(id) };
   });
   return out;
 }
@@ -149,11 +151,23 @@ function railRoute(from, to, date) {
     if (!best || total < best.minutes)
       best = { minutes: total, yen: f.yen, transfers: f.transfers, board: f.board,
                alight: o.id, accessMin: f.accessMin, egressMin: o.min, fareNote: f.fareNote,
-               lines: f.lines || [] };
+               lines: f.lines || [], stations: (f.stops || []).map(function (x) { return x.id; }),
+               legs: legsOf(f.stops || []) };
   });
   return best;
 }
 P.railRoute = railRoute;
+/* 駅の並びを「同じ路線に乗っている区間」にまとめる → [{line, from, to, stations}] */
+function legsOf(stops) {
+  var legs = [];
+  for (var i = 1; i < stops.length; i++) {
+    var L = stops[i].line || "(不明)", last = legs[legs.length - 1];
+    if (last && last.line === L) { last.to = stops[i].id; last.stations.push(stops[i].id); }
+    else legs.push({ line: L, from: stops[i - 1].id, to: stops[i].id, stations: [stops[i - 1].id, stops[i].id] });
+  }
+  return legs;
+}
+P.legsOf = legsOf;
 
 /* ======================================================= 単一手段の見積り */
 function baseOptions(from, to, date, aggr) {

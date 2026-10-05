@@ -55,6 +55,11 @@ function build() {
     }
     by[W.levelOf(L[1])].push(d);
   });
+  // 路線の太い線の上でも見えるように、白い縁取りを先に引いてから色の線を重ねる
+  Object.keys(by).forEach(function (k) {
+    if (!by[k].length) return;
+    g.appendChild(RG.el("path", { class: "walk__h", d: by[k].join(""), fill: "none" }));
+  });
   Object.keys(by).forEach(function (k) {
     if (!by[k].length) return;
     g.appendChild(RG.el("path", { class: "walk__p walk__p--" + k, d: by[k].join(""), fill: "none" }));

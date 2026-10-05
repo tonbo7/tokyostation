@@ -52,7 +52,7 @@ function buildPath(origin, destCoord, opt) {
   return [origin, destCoord];
 }
 
-RG.startNav = function (destCoord, destName, opt) {
+RG.startNav = function (destCoord, destName, opt, ctx) {
   if (!navigator.geolocation) { RG.tripStatus("この端末では位置情報が使えないため、案内モードは始められません。", "warn"); return; }
   if (RG.secureOK && !RG.secureOK()) { if (RG.showGeoHelp) RG.showGeoHelp({ code: 0 }); return; }
   if (!RG.Trip.origin) { RG.tripStatus("先に出発地を決めてください。", "warn"); return; }
@@ -64,15 +64,25 @@ RG.startNav = function (destCoord, destName, opt) {
   N.startedAt = Date.now(); N.muted = false; N.offCount = 0; N.lastPrompt = 0;
   N.startKm = RG.hav(RG.Trip.origin, destCoord);
   N.opt = opt || null;
+  N.ctx = ctx || N.ctx || null;                 // 比較結果（候補切替・やり直し用）
+  if (ctx && ctx.destId) N.destId = ctx.destId;
   bar();
+  if (RG.NavUI && RG.NavUI.onStart) RG.NavUI.onStart();
   RG.tripStatus("🧭 案内をはじめました。道をそれたら教えます。", "ok", 3200);
   N.watchId = navigator.geolocation.watchPosition(onPos, onErr,
     { enableHighAccuracy: true, timeout: 20000, maximumAge: 8000 });
 };
+/* 位置が一時的に取れない（トンネル・屋内・タイムアウト）だけでは案内を止めない。許可が無いときだけ止める */
 function onErr(e) {
-  RG.tripStatus("現在地を追えなくなりました（" + esc(e.message || "") + "）。案内を止めます。", "warn", 6000);
-  stop();
+  if (e && e.code === 1) {                      // PERMISSION_DENIED
+    RG.tripStatus("位置情報の許可がないため、案内を止めます。", "warn", 6000);
+    stop(); return;
+  }
+  RG.tripStatus("現在地を取得できていません（" + esc(e && e.message || "") + "）。取れしだい続けます。", "warn", 5000);
+  N.lostAt = Date.now();
 }
+/* 位置を1件流し込む（デバッグ・テスト用。watchPosition と同じ形） */
+RG.navFeed = function (p) { onPos(p); };
 function onPos(p) {
   if (!N.on) return;
   var c = [p.coords.latitude, p.coords.longitude];
@@ -80,7 +90,9 @@ function onPos(p) {
   if (RG.Map.paintMe) RG.Map.paintMe(c, p.coords.accuracy);
   var off = distToPath(c, N.path);
   var rest = RG.hav(c, N.dest);
+  N.lastOff = off; N.lastRest = rest; N.lastAcc = p.coords.accuracy;
   bar(off, rest, p.coords.accuracy);
+  if (RG.NavUI && RG.NavUI.update) RG.NavUI.update(c, off, rest, p.coords.accuracy);
   // GPS の誤差より十分に大きいときだけ「外れた」とみなす
   var tol = Math.max(tolOf(N.mode), (p.coords.accuracy || 0) * 1.6);
   if (off > tol) N.offCount++; else N.offCount = 0;
@@ -122,6 +134,7 @@ function bar(off, rest, acc) {
   if (!b) return;
   if (!N.on) { b.hidden = true; b.innerHTML = ""; return; }
   b.hidden = false;
+  if (RG.NavUI && RG.NavUI.bar) { RG.NavUI.bar(b, off, rest, acc, stop); return; }   // 新しいバー（詳細・候補・AR）
   var pct = N.startKm ? Math.max(0, Math.min(100, (1 - (rest == null ? N.startKm : rest) / N.startKm) * 100)) : 0;
   b.innerHTML =
     '<div class="nav__bar">' +
@@ -144,6 +157,7 @@ function stop(quiet) {
   if (N.watchId != null && navigator.geolocation) navigator.geolocation.clearWatch(N.watchId);
   N.watchId = null; N.on = false; N.muted = false; N.offCount = 0;
   bar();
+  if (RG.NavUI && RG.NavUI.onStop) RG.NavUI.onStop();
   if (!quiet) RG.tripStatus("案内を終わりました。おつかれさまでした。", "ok", 2800);
 }
 RG.stopNav = stop;
